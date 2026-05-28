@@ -1,4 +1,28 @@
-import { Rol, TipoVehiculo, EstadoVehiculo, TipoCombustible, EstadoCuadrilla } from "@/generated/prisma/client";
+import { Rol, TipoVehiculo, EstadoVehiculo, TipoCombustible, EstadoCuadrilla, CategoriaProducto, TipoMovimiento } from "@/generated/prisma/client";
+
+export const CATEGORIA_LABEL: Record<CategoriaProducto, string> = {
+  RED:               "Red / Networking",
+  FIBRA_OPTICA:      "Fibra óptica",
+  HERRAJE:           "Herrajes",
+  HERRAMIENTA:       "Herramientas",
+  MATERIAL_ELECTRICO:"Material eléctrico",
+  CONSUMIBLE:        "Consumibles",
+  OTRO:              "Otro",
+};
+
+export const TIPO_MOVIMIENTO_LABEL: Record<TipoMovimiento, string> = {
+  ENTRADA:      "Entrada",
+  SALIDA:       "Salida",
+  AJUSTE:       "Ajuste",
+  TRANSFERENCIA:"Transferencia",
+};
+
+export const TIPO_MOVIMIENTO_COLOR: Record<TipoMovimiento, string> = {
+  ENTRADA:      "text-green-600 dark:text-green-400",
+  SALIDA:       "text-red-600 dark:text-red-400",
+  AJUSTE:       "text-yellow-600 dark:text-yellow-400",
+  TRANSFERENCIA:"text-blue-600 dark:text-blue-400",
+};
 
 export const ROL_LABEL: Record<Rol, string> = {
   DUENO: "Dueño",
