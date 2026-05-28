@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: isp-manager-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: isp
+      POSTGRES_PASSWORD: isp123
+      POSTGRES_DB: isp_manager
+      POSTGRES_HOST_AUTH_METHOD: trust
+      PGTZ: America/Argentina/Buenos_Aires
+      TZ: America/Argentina/Buenos_Aires
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
