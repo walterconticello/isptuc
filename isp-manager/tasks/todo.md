@@ -99,7 +99,36 @@ Cuando todos los ítems anteriores estén marcados:
 
 ---
 
-## Próximo: Fase 2 — Módulos Operativos
-- [ ] T07 — Módulo Flota (Vehículos ABM)
-- [ ] T08 — Módulo Combustible (Registros)
-- [ ] T09 — Módulo Cuadrillas (con empleados reales)
+## ✅ Fase 2 — Módulos Operativos (completada)
+- [x] T07 — Módulo Flota (Vehículos ABM)
+- [x] T08 — Módulo Combustible (Registros + resumen mensual)
+- [x] T09 — Módulo Cuadrillas (con empleados reales)
+
+---
+
+## Fase 3 — Módulos de Gestión
+- [ ] T10 — Módulo Presupuestos (ABM + editor + PDF)
+- [ ] T11 — ABM Clientes e Items/Servicios
+
+---
+
+## Backlog — Mejoras pendientes
+
+### Combustible: Filtro por calendario
+**Origen:** usuario pidió poder filtrar registros por fecha con visualización
+de qué días hubo cargas.
+
+**Diseño acordado:**
+- Mini-calendario en la página `/combustible` (componente propio, sin librerías externas)
+- Días con al menos una carga pintados con punto de color o fondo tenue
+- Click en un día filtra la lista al feed de ese día
+- Navegación mes anterior / mes siguiente
+- Datos cargados server-side: `getCargarPorMes(año, mes)` retorna
+  `{ fecha: string; cantidad: number; costo: number }[]`
+- URL state: `?mes=2026-05` para que el filtro sea linkeable y sobreviva recarga
+- Filtro por vehículo adicional (select) que se combina con el calendario
+
+**Cuándo implementar:** después de completar Fase 3 (Presupuestos), como
+primera mejora de la Fase de pulido.
+
+---
