@@ -7,6 +7,7 @@ import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { combustibleSchema } from "@/lib/validations";
 import { Modulo, TipoCombustible } from "@/generated/prisma/enums";
+import { type FiltrosCombustible, whereCombustible } from "./filtros";
 
 type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string };
 
@@ -18,12 +19,12 @@ async function guardCombustible() {
   return { session, error: null };
 }
 
-export async function getRegistrosCombustible(vehiculoId?: string) {
+export async function getRegistrosCombustible(filtros: FiltrosCombustible = {}) {
   const { session, error } = await guardCombustible();
   if (!session) return { success: false as const, error: error! };
 
   const registros = await db.registroCombustible.findMany({
-    where: vehiculoId ? { vehiculoId } : undefined,
+    where: whereCombustible(filtros),
     orderBy: { fecha: "desc" },
     include: {
       vehiculo: { select: { patente: true, marca: true, modelo: true } },
@@ -33,25 +34,25 @@ export async function getRegistrosCombustible(vehiculoId?: string) {
   return { success: true as const, data: registros };
 }
 
-export async function getResumenMensual() {
+/**
+ * Días (yyyy-MM-dd, UTC) que tienen al menos una carga, opcionalmente acotados
+ * por vehículo/empleado. NO aplica el filtro de fecha: sirve para resaltar en el
+ * calendario qué días tienen cargas dentro del alcance seleccionado.
+ */
+export async function getDiasConCargas(filtros: Pick<FiltrosCombustible, "vehiculoId" | "empleadoId"> = {}) {
   const { session, error } = await guardCombustible();
   if (!session) return { success: false as const, error: error! };
 
-  const ahora = new Date();
-  const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-
   const registros = await db.registroCombustible.findMany({
-    where: { fecha: { gte: inicioMes } },
+    where: {
+      ...(filtros.vehiculoId ? { vehiculoId: filtros.vehiculoId } : {}),
+      ...(filtros.empleadoId ? { empleadoId: filtros.empleadoId } : {}),
+    },
+    select: { fecha: true },
   });
 
-  const totalCosto = registros.reduce((s, r) => s + r.costoTotal, 0);
-  const totalLitros = registros.reduce((s, r) => s + r.litros, 0);
-  const cantidadCargas = registros.length;
-
-  return {
-    success: true as const,
-    data: { totalCosto, totalLitros, cantidadCargas, mes: ahora.getMonth() + 1 },
-  };
+  const dias = Array.from(new Set(registros.map((r) => r.fecha.toISOString().slice(0, 10))));
+  return { success: true as const, data: dias };
 }
 
 export async function createRegistroCombustible(rawData: unknown): Promise<ActionResult<{ id: string }>> {
