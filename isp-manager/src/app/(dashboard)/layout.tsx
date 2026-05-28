@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header";
 import { ThemeSelector } from "@/components/theme-selector";
 import { LogOut } from "lucide-react";
 import { signOut } from "@/lib/auth";
+import { db } from "@/lib/db";
 
 export default async function DashboardLayout({
   children,
@@ -15,9 +16,10 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const modulosHabilitados = Array.from(
-    await getPermisosEmpleado(session.user.id)
-  );
+  const [modulosHabilitados, empresa] = await Promise.all([
+    getPermisosEmpleado(session.user.id).then((s) => Array.from(s)),
+    db.empresa.findFirst({ select: { nombre: true } }),
+  ]);
 
   const { nombre, apellido, rol } = session.user as {
     nombre: string;
@@ -34,7 +36,7 @@ export default async function DashboardLayout({
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
             ISP
           </div>
-          <span className="font-semibold">ISP Manager</span>
+          <span className="font-semibold truncate">{empresa?.nombre ?? "ISP Manager"}</span>
         </div>
 
         {/* Nav */}
