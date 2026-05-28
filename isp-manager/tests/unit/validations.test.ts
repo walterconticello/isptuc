@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   crearEmpleadoSchema,
   editarEmpleadoSchema,
+  loginSchema,
 } from "@/lib/validations";
 
 describe("crearEmpleadoSchema", () => {
@@ -57,6 +58,23 @@ describe("editarEmpleadoSchema", () => {
       rol: "GERENTE",
       password: "corta",
     });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("loginSchema", () => {
+  it("acepta email y contraseña válidos", () => {
+    const result = loginSchema.safeParse({ email: "admin@isp.local", password: "admin123" });
+    expect(result.success).toBe(true);
+  });
+
+  it("rechaza email inválido", () => {
+    const result = loginSchema.safeParse({ email: "no-email", password: "admin123" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rechaza contraseña vacía", () => {
+    const result = loginSchema.safeParse({ email: "admin@isp.local", password: "" });
     expect(result.success).toBe(false);
   });
 });

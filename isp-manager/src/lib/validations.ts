@@ -26,5 +26,11 @@ export const editarEmpleadoSchema = z.object({
     .or(z.literal("")),
 });
 
+export const loginSchema = z.object({
+  email: z.string().email("Email inválido"),
+  password: z.string().min(1, "La contraseña es requerida"),
+});
+
 export type CrearEmpleadoInput = z.infer<typeof crearEmpleadoSchema>;
 export type EditarEmpleadoInput = z.infer<typeof editarEmpleadoSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
