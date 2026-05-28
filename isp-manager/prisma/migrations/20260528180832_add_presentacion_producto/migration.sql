@@ -1,0 +1,12 @@
+-- AlterTable
+ALTER TABLE "MovimientoStock" ALTER COLUMN "cantidad" SET DATA TYPE DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "Producto" ADD COLUMN     "contenidoPorUnidad" DOUBLE PRECISION,
+ADD COLUMN     "presentacion" TEXT,
+ALTER COLUMN "stockMinimo" SET DEFAULT 0,
+ALTER COLUMN "stockMinimo" SET DATA TYPE DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "StockProducto" ALTER COLUMN "cantidad" SET DEFAULT 0,
+ALTER COLUMN "cantidad" SET DATA TYPE DOUBLE PRECISION;

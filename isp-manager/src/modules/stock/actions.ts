@@ -31,18 +31,21 @@ const productoSchema = z.object({
   descripcion: z.string().optional(),
   categoria: z.enum(Object.values(CategoriaProducto) as [string, ...string[]]),
   unidad: z.string().min(1, "La unidad es requerida"),
-  stockMinimo: z.coerce.number().int().min(0).default(0),
+  stockMinimo: z.coerce.number().min(0).default(0),
   esHerramienta: z.coerce.boolean().default(false),
+  presentacion: z.string().optional().or(z.literal("")),
+  contenidoPorUnidad: z.coerce.number().positive().optional().or(z.literal("")).transform(v => v === "" ? undefined : v ? Number(v) : undefined),
 });
 
 const movimientoSchema = z.object({
   almacenId: z.string().min(1, "Seleccioná un almacén"),
   productoId: z.string().min(1, "Seleccioná un producto"),
   tipo: z.enum(Object.values(TipoMovimiento) as [string, ...string[]]),
-  cantidad: z.coerce.number().int().min(1, "La cantidad debe ser al menos 1"),
+  cantidad: z.coerce.number().positive("La cantidad debe ser positiva"),
+  // Si el producto tiene presentación, también se puede ingresar por cantidad de presentaciones
+  cantidadPresentaciones: z.coerce.number().positive().optional().or(z.literal("")).transform(v => v === "" ? undefined : v ? Number(v) : undefined),
   motivo: z.string().optional(),
   referencia: z.string().optional(),
-  // Para TRANSFERENCIA
   almacenDestinoId: z.string().optional(),
 });
 
@@ -189,6 +192,8 @@ export async function createProducto(rawData: unknown): Promise<ActionResult<{ i
       unidad: parsed.data.unidad,
       stockMinimo: parsed.data.stockMinimo,
       esHerramienta: Boolean(parsed.data.esHerramienta),
+      presentacion: parsed.data.presentacion || null,
+      contenidoPorUnidad: parsed.data.contenidoPorUnidad ?? null,
     },
   });
   revalidatePath("/stock/productos");
@@ -212,6 +217,8 @@ export async function updateProducto(id: string, rawData: unknown): Promise<Acti
       unidad: parsed.data.unidad,
       stockMinimo: parsed.data.stockMinimo,
       esHerramienta: Boolean(parsed.data.esHerramienta),
+      presentacion: parsed.data.presentacion || null,
+      contenidoPorUnidad: parsed.data.contenidoPorUnidad ?? null,
     },
   });
   revalidatePath("/stock/productos");

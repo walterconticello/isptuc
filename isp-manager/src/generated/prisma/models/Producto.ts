@@ -28,10 +28,12 @@ export type AggregateProducto = {
 
 export type ProductoAvgAggregateOutputType = {
   stockMinimo: number | null
+  contenidoPorUnidad: number | null
 }
 
 export type ProductoSumAggregateOutputType = {
   stockMinimo: number | null
+  contenidoPorUnidad: number | null
 }
 
 export type ProductoMinAggregateOutputType = {
@@ -44,6 +46,8 @@ export type ProductoMinAggregateOutputType = {
   stockMinimo: number | null
   esHerramienta: boolean | null
   activo: boolean | null
+  presentacion: string | null
+  contenidoPorUnidad: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -58,6 +62,8 @@ export type ProductoMaxAggregateOutputType = {
   stockMinimo: number | null
   esHerramienta: boolean | null
   activo: boolean | null
+  presentacion: string | null
+  contenidoPorUnidad: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -72,6 +78,8 @@ export type ProductoCountAggregateOutputType = {
   stockMinimo: number
   esHerramienta: number
   activo: number
+  presentacion: number
+  contenidoPorUnidad: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -80,10 +88,12 @@ export type ProductoCountAggregateOutputType = {
 
 export type ProductoAvgAggregateInputType = {
   stockMinimo?: true
+  contenidoPorUnidad?: true
 }
 
 export type ProductoSumAggregateInputType = {
   stockMinimo?: true
+  contenidoPorUnidad?: true
 }
 
 export type ProductoMinAggregateInputType = {
@@ -96,6 +106,8 @@ export type ProductoMinAggregateInputType = {
   stockMinimo?: true
   esHerramienta?: true
   activo?: true
+  presentacion?: true
+  contenidoPorUnidad?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -110,6 +122,8 @@ export type ProductoMaxAggregateInputType = {
   stockMinimo?: true
   esHerramienta?: true
   activo?: true
+  presentacion?: true
+  contenidoPorUnidad?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -124,6 +138,8 @@ export type ProductoCountAggregateInputType = {
   stockMinimo?: true
   esHerramienta?: true
   activo?: true
+  presentacion?: true
+  contenidoPorUnidad?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -225,6 +241,8 @@ export type ProductoGroupByOutputType = {
   stockMinimo: number
   esHerramienta: boolean
   activo: boolean
+  presentacion: string | null
+  contenidoPorUnidad: number | null
   createdAt: Date
   updatedAt: Date
   _count: ProductoCountAggregateOutputType | null
@@ -259,9 +277,11 @@ export type ProductoWhereInput = {
   descripcion?: Prisma.StringNullableFilter<"Producto"> | string | null
   categoria?: Prisma.EnumCategoriaProductoFilter<"Producto"> | $Enums.CategoriaProducto
   unidad?: Prisma.StringFilter<"Producto"> | string
-  stockMinimo?: Prisma.IntFilter<"Producto"> | number
+  stockMinimo?: Prisma.FloatFilter<"Producto"> | number
   esHerramienta?: Prisma.BoolFilter<"Producto"> | boolean
   activo?: Prisma.BoolFilter<"Producto"> | boolean
+  presentacion?: Prisma.StringNullableFilter<"Producto"> | string | null
+  contenidoPorUnidad?: Prisma.FloatNullableFilter<"Producto"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Producto"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Producto"> | Date | string
   stock?: Prisma.StockProductoListRelationFilter
@@ -279,6 +299,8 @@ export type ProductoOrderByWithRelationInput = {
   stockMinimo?: Prisma.SortOrder
   esHerramienta?: Prisma.SortOrder
   activo?: Prisma.SortOrder
+  presentacion?: Prisma.SortOrderInput | Prisma.SortOrder
+  contenidoPorUnidad?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   stock?: Prisma.StockProductoOrderByRelationAggregateInput
@@ -296,9 +318,11 @@ export type ProductoWhereUniqueInput = Prisma.AtLeast<{
   descripcion?: Prisma.StringNullableFilter<"Producto"> | string | null
   categoria?: Prisma.EnumCategoriaProductoFilter<"Producto"> | $Enums.CategoriaProducto
   unidad?: Prisma.StringFilter<"Producto"> | string
-  stockMinimo?: Prisma.IntFilter<"Producto"> | number
+  stockMinimo?: Prisma.FloatFilter<"Producto"> | number
   esHerramienta?: Prisma.BoolFilter<"Producto"> | boolean
   activo?: Prisma.BoolFilter<"Producto"> | boolean
+  presentacion?: Prisma.StringNullableFilter<"Producto"> | string | null
+  contenidoPorUnidad?: Prisma.FloatNullableFilter<"Producto"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Producto"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Producto"> | Date | string
   stock?: Prisma.StockProductoListRelationFilter
@@ -316,6 +340,8 @@ export type ProductoOrderByWithAggregationInput = {
   stockMinimo?: Prisma.SortOrder
   esHerramienta?: Prisma.SortOrder
   activo?: Prisma.SortOrder
+  presentacion?: Prisma.SortOrderInput | Prisma.SortOrder
+  contenidoPorUnidad?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProductoCountOrderByAggregateInput
@@ -335,9 +361,11 @@ export type ProductoScalarWhereWithAggregatesInput = {
   descripcion?: Prisma.StringNullableWithAggregatesFilter<"Producto"> | string | null
   categoria?: Prisma.EnumCategoriaProductoWithAggregatesFilter<"Producto"> | $Enums.CategoriaProducto
   unidad?: Prisma.StringWithAggregatesFilter<"Producto"> | string
-  stockMinimo?: Prisma.IntWithAggregatesFilter<"Producto"> | number
+  stockMinimo?: Prisma.FloatWithAggregatesFilter<"Producto"> | number
   esHerramienta?: Prisma.BoolWithAggregatesFilter<"Producto"> | boolean
   activo?: Prisma.BoolWithAggregatesFilter<"Producto"> | boolean
+  presentacion?: Prisma.StringNullableWithAggregatesFilter<"Producto"> | string | null
+  contenidoPorUnidad?: Prisma.FloatNullableWithAggregatesFilter<"Producto"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Producto"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Producto"> | Date | string
 }
@@ -352,6 +380,8 @@ export type ProductoCreateInput = {
   stockMinimo?: number
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: string | null
+  contenidoPorUnidad?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   stock?: Prisma.StockProductoCreateNestedManyWithoutProductoInput
@@ -369,6 +399,8 @@ export type ProductoUncheckedCreateInput = {
   stockMinimo?: number
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: string | null
+  contenidoPorUnidad?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   stock?: Prisma.StockProductoUncheckedCreateNestedManyWithoutProductoInput
@@ -383,9 +415,11 @@ export type ProductoUpdateInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stock?: Prisma.StockProductoUpdateManyWithoutProductoNestedInput
@@ -400,9 +434,11 @@ export type ProductoUncheckedUpdateInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stock?: Prisma.StockProductoUncheckedUpdateManyWithoutProductoNestedInput
@@ -420,6 +456,8 @@ export type ProductoCreateManyInput = {
   stockMinimo?: number
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: string | null
+  contenidoPorUnidad?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -431,9 +469,11 @@ export type ProductoUpdateManyMutationInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -445,9 +485,11 @@ export type ProductoUncheckedUpdateManyInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -462,12 +504,15 @@ export type ProductoCountOrderByAggregateInput = {
   stockMinimo?: Prisma.SortOrder
   esHerramienta?: Prisma.SortOrder
   activo?: Prisma.SortOrder
+  presentacion?: Prisma.SortOrder
+  contenidoPorUnidad?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type ProductoAvgOrderByAggregateInput = {
   stockMinimo?: Prisma.SortOrder
+  contenidoPorUnidad?: Prisma.SortOrder
 }
 
 export type ProductoMaxOrderByAggregateInput = {
@@ -480,6 +525,8 @@ export type ProductoMaxOrderByAggregateInput = {
   stockMinimo?: Prisma.SortOrder
   esHerramienta?: Prisma.SortOrder
   activo?: Prisma.SortOrder
+  presentacion?: Prisma.SortOrder
+  contenidoPorUnidad?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -494,12 +541,15 @@ export type ProductoMinOrderByAggregateInput = {
   stockMinimo?: Prisma.SortOrder
   esHerramienta?: Prisma.SortOrder
   activo?: Prisma.SortOrder
+  presentacion?: Prisma.SortOrder
+  contenidoPorUnidad?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type ProductoSumOrderByAggregateInput = {
   stockMinimo?: Prisma.SortOrder
+  contenidoPorUnidad?: Prisma.SortOrder
 }
 
 export type ProductoScalarRelationFilter = {
@@ -563,6 +613,8 @@ export type ProductoCreateWithoutStockInput = {
   stockMinimo?: number
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: string | null
+  contenidoPorUnidad?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   movimientos?: Prisma.MovimientoStockCreateNestedManyWithoutProductoInput
@@ -579,6 +631,8 @@ export type ProductoUncheckedCreateWithoutStockInput = {
   stockMinimo?: number
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: string | null
+  contenidoPorUnidad?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   movimientos?: Prisma.MovimientoStockUncheckedCreateNestedManyWithoutProductoInput
@@ -608,9 +662,11 @@ export type ProductoUpdateWithoutStockInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   movimientos?: Prisma.MovimientoStockUpdateManyWithoutProductoNestedInput
@@ -624,9 +680,11 @@ export type ProductoUncheckedUpdateWithoutStockInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   movimientos?: Prisma.MovimientoStockUncheckedUpdateManyWithoutProductoNestedInput
@@ -643,6 +701,8 @@ export type ProductoCreateWithoutMovimientosInput = {
   stockMinimo?: number
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: string | null
+  contenidoPorUnidad?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   stock?: Prisma.StockProductoCreateNestedManyWithoutProductoInput
@@ -659,6 +719,8 @@ export type ProductoUncheckedCreateWithoutMovimientosInput = {
   stockMinimo?: number
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: string | null
+  contenidoPorUnidad?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   stock?: Prisma.StockProductoUncheckedCreateNestedManyWithoutProductoInput
@@ -688,9 +750,11 @@ export type ProductoUpdateWithoutMovimientosInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stock?: Prisma.StockProductoUpdateManyWithoutProductoNestedInput
@@ -704,9 +768,11 @@ export type ProductoUncheckedUpdateWithoutMovimientosInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stock?: Prisma.StockProductoUncheckedUpdateManyWithoutProductoNestedInput
@@ -723,6 +789,8 @@ export type ProductoCreateWithoutAsignacionesInput = {
   stockMinimo?: number
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: string | null
+  contenidoPorUnidad?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   stock?: Prisma.StockProductoCreateNestedManyWithoutProductoInput
@@ -739,6 +807,8 @@ export type ProductoUncheckedCreateWithoutAsignacionesInput = {
   stockMinimo?: number
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: string | null
+  contenidoPorUnidad?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   stock?: Prisma.StockProductoUncheckedCreateNestedManyWithoutProductoInput
@@ -768,9 +838,11 @@ export type ProductoUpdateWithoutAsignacionesInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stock?: Prisma.StockProductoUpdateManyWithoutProductoNestedInput
@@ -784,9 +856,11 @@ export type ProductoUncheckedUpdateWithoutAsignacionesInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   categoria?: Prisma.EnumCategoriaProductoFieldUpdateOperationsInput | $Enums.CategoriaProducto
   unidad?: Prisma.StringFieldUpdateOperationsInput | string
-  stockMinimo?: Prisma.IntFieldUpdateOperationsInput | number
+  stockMinimo?: Prisma.FloatFieldUpdateOperationsInput | number
   esHerramienta?: Prisma.BoolFieldUpdateOperationsInput | boolean
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presentacion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contenidoPorUnidad?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stock?: Prisma.StockProductoUncheckedUpdateManyWithoutProductoNestedInput
@@ -852,6 +926,8 @@ export type ProductoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   stockMinimo?: boolean
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: boolean
+  contenidoPorUnidad?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   stock?: boolean | Prisma.Producto$stockArgs<ExtArgs>
@@ -870,6 +946,8 @@ export type ProductoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   stockMinimo?: boolean
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: boolean
+  contenidoPorUnidad?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["producto"]>
@@ -884,6 +962,8 @@ export type ProductoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   stockMinimo?: boolean
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: boolean
+  contenidoPorUnidad?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["producto"]>
@@ -898,11 +978,13 @@ export type ProductoSelectScalar = {
   stockMinimo?: boolean
   esHerramienta?: boolean
   activo?: boolean
+  presentacion?: boolean
+  contenidoPorUnidad?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "codigo" | "nombre" | "descripcion" | "categoria" | "unidad" | "stockMinimo" | "esHerramienta" | "activo" | "createdAt" | "updatedAt", ExtArgs["result"]["producto"]>
+export type ProductoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "codigo" | "nombre" | "descripcion" | "categoria" | "unidad" | "stockMinimo" | "esHerramienta" | "activo" | "presentacion" | "contenidoPorUnidad" | "createdAt" | "updatedAt", ExtArgs["result"]["producto"]>
 export type ProductoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   stock?: boolean | Prisma.Producto$stockArgs<ExtArgs>
   movimientos?: boolean | Prisma.Producto$movimientosArgs<ExtArgs>
@@ -929,6 +1011,8 @@ export type $ProductoPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     stockMinimo: number
     esHerramienta: boolean
     activo: boolean
+    presentacion: string | null
+    contenidoPorUnidad: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["producto"]>
@@ -1363,9 +1447,11 @@ export interface ProductoFieldRefs {
   readonly descripcion: Prisma.FieldRef<"Producto", 'String'>
   readonly categoria: Prisma.FieldRef<"Producto", 'CategoriaProducto'>
   readonly unidad: Prisma.FieldRef<"Producto", 'String'>
-  readonly stockMinimo: Prisma.FieldRef<"Producto", 'Int'>
+  readonly stockMinimo: Prisma.FieldRef<"Producto", 'Float'>
   readonly esHerramienta: Prisma.FieldRef<"Producto", 'Boolean'>
   readonly activo: Prisma.FieldRef<"Producto", 'Boolean'>
+  readonly presentacion: Prisma.FieldRef<"Producto", 'String'>
+  readonly contenidoPorUnidad: Prisma.FieldRef<"Producto", 'Float'>
   readonly createdAt: Prisma.FieldRef<"Producto", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Producto", 'DateTime'>
 }

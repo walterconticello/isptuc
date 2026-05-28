@@ -18,7 +18,11 @@ export default async function NuevoMovimientoPage({
 
   const [almacenes, productos] = await Promise.all([
     db.almacen.findMany({ where: { activo: true }, select: { id: true, nombre: true }, orderBy: { nombre: "asc" } }),
-    db.producto.findMany({ where: { activo: true }, select: { id: true, nombre: true, unidad: true }, orderBy: { nombre: "asc" } }),
+    db.producto.findMany({
+      where: { activo: true },
+      select: { id: true, nombre: true, unidad: true, presentacion: true, contenidoPorUnidad: true },
+      orderBy: { nombre: "asc" },
+    }).then((rows) => rows.map((r) => ({ ...r, contenidoPorUnidad: r.contenidoPorUnidad ? Number(r.contenidoPorUnidad) : null }))),
   ]);
 
   return (

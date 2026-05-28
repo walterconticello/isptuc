@@ -214,7 +214,7 @@ export type StockProductoWhereInput = {
   id?: Prisma.StringFilter<"StockProducto"> | string
   almacenId?: Prisma.StringFilter<"StockProducto"> | string
   productoId?: Prisma.StringFilter<"StockProducto"> | string
-  cantidad?: Prisma.IntFilter<"StockProducto"> | number
+  cantidad?: Prisma.FloatFilter<"StockProducto"> | number
   updatedAt?: Prisma.DateTimeFilter<"StockProducto"> | Date | string
   almacen?: Prisma.XOR<Prisma.AlmacenScalarRelationFilter, Prisma.AlmacenWhereInput>
   producto?: Prisma.XOR<Prisma.ProductoScalarRelationFilter, Prisma.ProductoWhereInput>
@@ -238,7 +238,7 @@ export type StockProductoWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.StockProductoWhereInput | Prisma.StockProductoWhereInput[]
   almacenId?: Prisma.StringFilter<"StockProducto"> | string
   productoId?: Prisma.StringFilter<"StockProducto"> | string
-  cantidad?: Prisma.IntFilter<"StockProducto"> | number
+  cantidad?: Prisma.FloatFilter<"StockProducto"> | number
   updatedAt?: Prisma.DateTimeFilter<"StockProducto"> | Date | string
   almacen?: Prisma.XOR<Prisma.AlmacenScalarRelationFilter, Prisma.AlmacenWhereInput>
   producto?: Prisma.XOR<Prisma.ProductoScalarRelationFilter, Prisma.ProductoWhereInput>
@@ -264,7 +264,7 @@ export type StockProductoScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"StockProducto"> | string
   almacenId?: Prisma.StringWithAggregatesFilter<"StockProducto"> | string
   productoId?: Prisma.StringWithAggregatesFilter<"StockProducto"> | string
-  cantidad?: Prisma.IntWithAggregatesFilter<"StockProducto"> | number
+  cantidad?: Prisma.FloatWithAggregatesFilter<"StockProducto"> | number
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"StockProducto"> | Date | string
 }
 
@@ -286,7 +286,7 @@ export type StockProductoUncheckedCreateInput = {
 
 export type StockProductoUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   almacen?: Prisma.AlmacenUpdateOneRequiredWithoutStockNestedInput
   producto?: Prisma.ProductoUpdateOneRequiredWithoutStockNestedInput
@@ -296,7 +296,7 @@ export type StockProductoUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   almacenId?: Prisma.StringFieldUpdateOperationsInput | string
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -310,7 +310,7 @@ export type StockProductoCreateManyInput = {
 
 export type StockProductoUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -318,7 +318,7 @@ export type StockProductoUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   almacenId?: Prisma.StringFieldUpdateOperationsInput | string
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -500,7 +500,7 @@ export type StockProductoScalarWhereInput = {
   id?: Prisma.StringFilter<"StockProducto"> | string
   almacenId?: Prisma.StringFilter<"StockProducto"> | string
   productoId?: Prisma.StringFilter<"StockProducto"> | string
-  cantidad?: Prisma.IntFilter<"StockProducto"> | number
+  cantidad?: Prisma.FloatFilter<"StockProducto"> | number
   updatedAt?: Prisma.DateTimeFilter<"StockProducto"> | Date | string
 }
 
@@ -553,7 +553,7 @@ export type StockProductoCreateManyAlmacenInput = {
 
 export type StockProductoUpdateWithoutAlmacenInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   producto?: Prisma.ProductoUpdateOneRequiredWithoutStockNestedInput
 }
@@ -561,14 +561,14 @@ export type StockProductoUpdateWithoutAlmacenInput = {
 export type StockProductoUncheckedUpdateWithoutAlmacenInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type StockProductoUncheckedUpdateManyWithoutAlmacenInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -581,7 +581,7 @@ export type StockProductoCreateManyProductoInput = {
 
 export type StockProductoUpdateWithoutProductoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   almacen?: Prisma.AlmacenUpdateOneRequiredWithoutStockNestedInput
 }
@@ -589,14 +589,14 @@ export type StockProductoUpdateWithoutProductoInput = {
 export type StockProductoUncheckedUpdateWithoutProductoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   almacenId?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type StockProductoUncheckedUpdateManyWithoutProductoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   almacenId?: Prisma.StringFieldUpdateOperationsInput | string
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1094,7 +1094,7 @@ export interface StockProductoFieldRefs {
   readonly id: Prisma.FieldRef<"StockProducto", 'String'>
   readonly almacenId: Prisma.FieldRef<"StockProducto", 'String'>
   readonly productoId: Prisma.FieldRef<"StockProducto", 'String'>
-  readonly cantidad: Prisma.FieldRef<"StockProducto", 'Int'>
+  readonly cantidad: Prisma.FieldRef<"StockProducto", 'Float'>
   readonly updatedAt: Prisma.FieldRef<"StockProducto", 'DateTime'>
 }
     

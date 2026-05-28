@@ -280,17 +280,21 @@ model Almacen {
 }
 
 model Producto {
-  id            String            @id @default(cuid())
-  codigo        String?           @unique
-  nombre        String
-  descripcion   String?
-  categoria     CategoriaProducto
-  unidad        String
-  stockMinimo   Int               @default(0)
-  esHerramienta Boolean           @default(false)
-  activo        Boolean           @default(true)
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id                 String            @id @default(cuid())
+  codigo             String?           @unique
+  nombre             String
+  descripcion        String?
+  categoria          CategoriaProducto
+  unidad             String
+  stockMinimo        Float             @default(0)
+  esHerramienta      Boolean           @default(false)
+  activo             Boolean           @default(true)
+  // Presentación de entrada (ej: "Bobina", "Rollo", "Caja")
+  presentacion       String?
+  // Cuántas unidades base (metros, kg, etc.) trae cada presentación
+  contenidoPorUnidad Float?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 
   stock        StockProducto[]
   movimientos  MovimientoStock[]
@@ -301,7 +305,7 @@ model StockProducto {
   id         String   @id @default(cuid())
   almacenId  String
   productoId String
-  cantidad   Int      @default(0)
+  cantidad   Float    @default(0)
   updatedAt  DateTime @updatedAt
 
   almacen  Almacen  @relation(fields: [almacenId], references: [id])
@@ -316,7 +320,7 @@ model MovimientoStock {
   productoId String
   empleadoId String
   tipo       TipoMovimiento
-  cantidad   Int
+  cantidad   Float
   motivo     String?
   referencia String?
   fecha      DateTime       @default(now())

@@ -1918,6 +1918,8 @@ export const ProductoScalarFieldEnum = {
   stockMinimo: 'stockMinimo',
   esHerramienta: 'esHerramienta',
   activo: 'activo',
+  presentacion: 'presentacion',
+  contenidoPorUnidad: 'contenidoPorUnidad',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

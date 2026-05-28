@@ -251,7 +251,7 @@ export type MovimientoStockWhereInput = {
   productoId?: Prisma.StringFilter<"MovimientoStock"> | string
   empleadoId?: Prisma.StringFilter<"MovimientoStock"> | string
   tipo?: Prisma.EnumTipoMovimientoFilter<"MovimientoStock"> | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFilter<"MovimientoStock"> | number
+  cantidad?: Prisma.FloatFilter<"MovimientoStock"> | number
   motivo?: Prisma.StringNullableFilter<"MovimientoStock"> | string | null
   referencia?: Prisma.StringNullableFilter<"MovimientoStock"> | string | null
   fecha?: Prisma.DateTimeFilter<"MovimientoStock"> | Date | string
@@ -286,7 +286,7 @@ export type MovimientoStockWhereUniqueInput = Prisma.AtLeast<{
   productoId?: Prisma.StringFilter<"MovimientoStock"> | string
   empleadoId?: Prisma.StringFilter<"MovimientoStock"> | string
   tipo?: Prisma.EnumTipoMovimientoFilter<"MovimientoStock"> | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFilter<"MovimientoStock"> | number
+  cantidad?: Prisma.FloatFilter<"MovimientoStock"> | number
   motivo?: Prisma.StringNullableFilter<"MovimientoStock"> | string | null
   referencia?: Prisma.StringNullableFilter<"MovimientoStock"> | string | null
   fecha?: Prisma.DateTimeFilter<"MovimientoStock"> | Date | string
@@ -323,7 +323,7 @@ export type MovimientoStockScalarWhereWithAggregatesInput = {
   productoId?: Prisma.StringWithAggregatesFilter<"MovimientoStock"> | string
   empleadoId?: Prisma.StringWithAggregatesFilter<"MovimientoStock"> | string
   tipo?: Prisma.EnumTipoMovimientoWithAggregatesFilter<"MovimientoStock"> | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntWithAggregatesFilter<"MovimientoStock"> | number
+  cantidad?: Prisma.FloatWithAggregatesFilter<"MovimientoStock"> | number
   motivo?: Prisma.StringNullableWithAggregatesFilter<"MovimientoStock"> | string | null
   referencia?: Prisma.StringNullableWithAggregatesFilter<"MovimientoStock"> | string | null
   fecha?: Prisma.DateTimeWithAggregatesFilter<"MovimientoStock"> | Date | string
@@ -359,7 +359,7 @@ export type MovimientoStockUncheckedCreateInput = {
 export type MovimientoStockUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -375,7 +375,7 @@ export type MovimientoStockUncheckedUpdateInput = {
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
   empleadoId?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -398,7 +398,7 @@ export type MovimientoStockCreateManyInput = {
 export type MovimientoStockUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -411,7 +411,7 @@ export type MovimientoStockUncheckedUpdateManyInput = {
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
   empleadoId?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -664,7 +664,7 @@ export type MovimientoStockScalarWhereInput = {
   productoId?: Prisma.StringFilter<"MovimientoStock"> | string
   empleadoId?: Prisma.StringFilter<"MovimientoStock"> | string
   tipo?: Prisma.EnumTipoMovimientoFilter<"MovimientoStock"> | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFilter<"MovimientoStock"> | number
+  cantidad?: Prisma.FloatFilter<"MovimientoStock"> | number
   motivo?: Prisma.StringNullableFilter<"MovimientoStock"> | string | null
   referencia?: Prisma.StringNullableFilter<"MovimientoStock"> | string | null
   fecha?: Prisma.DateTimeFilter<"MovimientoStock"> | Date | string
@@ -786,7 +786,7 @@ export type MovimientoStockCreateManyEmpleadoInput = {
 export type MovimientoStockUpdateWithoutEmpleadoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -800,7 +800,7 @@ export type MovimientoStockUncheckedUpdateWithoutEmpleadoInput = {
   almacenId?: Prisma.StringFieldUpdateOperationsInput | string
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -812,7 +812,7 @@ export type MovimientoStockUncheckedUpdateManyWithoutEmpleadoInput = {
   almacenId?: Prisma.StringFieldUpdateOperationsInput | string
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -834,7 +834,7 @@ export type MovimientoStockCreateManyAlmacenInput = {
 export type MovimientoStockUpdateWithoutAlmacenInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -848,7 +848,7 @@ export type MovimientoStockUncheckedUpdateWithoutAlmacenInput = {
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
   empleadoId?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -860,7 +860,7 @@ export type MovimientoStockUncheckedUpdateManyWithoutAlmacenInput = {
   productoId?: Prisma.StringFieldUpdateOperationsInput | string
   empleadoId?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -882,7 +882,7 @@ export type MovimientoStockCreateManyProductoInput = {
 export type MovimientoStockUpdateWithoutProductoInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -896,7 +896,7 @@ export type MovimientoStockUncheckedUpdateWithoutProductoInput = {
   almacenId?: Prisma.StringFieldUpdateOperationsInput | string
   empleadoId?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -908,7 +908,7 @@ export type MovimientoStockUncheckedUpdateManyWithoutProductoInput = {
   almacenId?: Prisma.StringFieldUpdateOperationsInput | string
   empleadoId?: Prisma.StringFieldUpdateOperationsInput | string
   tipo?: Prisma.EnumTipoMovimientoFieldUpdateOperationsInput | $Enums.TipoMovimiento
-  cantidad?: Prisma.IntFieldUpdateOperationsInput | number
+  cantidad?: Prisma.FloatFieldUpdateOperationsInput | number
   motivo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referencia?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1444,7 +1444,7 @@ export interface MovimientoStockFieldRefs {
   readonly productoId: Prisma.FieldRef<"MovimientoStock", 'String'>
   readonly empleadoId: Prisma.FieldRef<"MovimientoStock", 'String'>
   readonly tipo: Prisma.FieldRef<"MovimientoStock", 'TipoMovimiento'>
-  readonly cantidad: Prisma.FieldRef<"MovimientoStock", 'Int'>
+  readonly cantidad: Prisma.FieldRef<"MovimientoStock", 'Float'>
   readonly motivo: Prisma.FieldRef<"MovimientoStock", 'String'>
   readonly referencia: Prisma.FieldRef<"MovimientoStock", 'String'>
   readonly fecha: Prisma.FieldRef<"MovimientoStock", 'DateTime'>
