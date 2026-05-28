@@ -51,7 +51,23 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-
+  Empresa: 'Empresa',
+  Empleado: 'Empleado',
+  PermisoModulo: 'PermisoModulo',
+  Vehiculo: 'Vehiculo',
+  Cuadrilla: 'Cuadrilla',
+  MiembroCuadrilla: 'MiembroCuadrilla',
+  RegistroCombustible: 'RegistroCombustible',
+  Cliente: 'Cliente',
+  ItemServicio: 'ItemServicio',
+  Presupuesto: 'Presupuesto',
+  PresupuestoItem: 'PresupuestoItem',
+  Impuesto: 'Impuesto',
+  Almacen: 'Almacen',
+  Producto: 'Producto',
+  StockProducto: 'StockProducto',
+  MovimientoStock: 'MovimientoStock',
+  AsignacionHerramienta: 'AsignacionHerramienta'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -68,4 +84,276 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const EmpresaScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  cuit: 'cuit',
+  direccion: 'direccion',
+  telefono: 'telefono',
+  email: 'email',
+  logoUrl: 'logoUrl',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmpresaScalarFieldEnum = (typeof EmpresaScalarFieldEnum)[keyof typeof EmpresaScalarFieldEnum]
+
+
+export const EmpleadoScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  passwordHash: 'passwordHash',
+  nombre: 'nombre',
+  apellido: 'apellido',
+  dni: 'dni',
+  telefono: 'telefono',
+  rol: 'rol',
+  activo: 'activo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmpleadoScalarFieldEnum = (typeof EmpleadoScalarFieldEnum)[keyof typeof EmpleadoScalarFieldEnum]
+
+
+export const PermisoModuloScalarFieldEnum = {
+  id: 'id',
+  rol: 'rol',
+  modulo: 'modulo',
+  puede: 'puede'
+} as const
+
+export type PermisoModuloScalarFieldEnum = (typeof PermisoModuloScalarFieldEnum)[keyof typeof PermisoModuloScalarFieldEnum]
+
+
+export const VehiculoScalarFieldEnum = {
+  id: 'id',
+  patente: 'patente',
+  marca: 'marca',
+  modelo: 'modelo',
+  anio: 'anio',
+  tipo: 'tipo',
+  estado: 'estado',
+  odometroActual: 'odometroActual',
+  cuadrillaId: 'cuadrillaId',
+  notas: 'notas',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VehiculoScalarFieldEnum = (typeof VehiculoScalarFieldEnum)[keyof typeof VehiculoScalarFieldEnum]
+
+
+export const CuadrillaScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  descripcion: 'descripcion',
+  estado: 'estado',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CuadrillaScalarFieldEnum = (typeof CuadrillaScalarFieldEnum)[keyof typeof CuadrillaScalarFieldEnum]
+
+
+export const MiembroCuadrillaScalarFieldEnum = {
+  id: 'id',
+  cuadrillaId: 'cuadrillaId',
+  empleadoId: 'empleadoId',
+  esJefe: 'esJefe',
+  desde: 'desde'
+} as const
+
+export type MiembroCuadrillaScalarFieldEnum = (typeof MiembroCuadrillaScalarFieldEnum)[keyof typeof MiembroCuadrillaScalarFieldEnum]
+
+
+export const RegistroCombustibleScalarFieldEnum = {
+  id: 'id',
+  vehiculoId: 'vehiculoId',
+  empleadoId: 'empleadoId',
+  fecha: 'fecha',
+  litros: 'litros',
+  precioPorLitro: 'precioPorLitro',
+  costoTotal: 'costoTotal',
+  odometro: 'odometro',
+  kmDesdeUltimo: 'kmDesdeUltimo',
+  consumo: 'consumo',
+  tipoCombustible: 'tipoCombustible',
+  estacion: 'estacion',
+  notas: 'notas',
+  createdAt: 'createdAt'
+} as const
+
+export type RegistroCombustibleScalarFieldEnum = (typeof RegistroCombustibleScalarFieldEnum)[keyof typeof RegistroCombustibleScalarFieldEnum]
+
+
+export const ClienteScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  cuit: 'cuit',
+  direccion: 'direccion',
+  telefono: 'telefono',
+  email: 'email',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClienteScalarFieldEnum = (typeof ClienteScalarFieldEnum)[keyof typeof ClienteScalarFieldEnum]
+
+
+export const ItemServicioScalarFieldEnum = {
+  id: 'id',
+  codigo: 'codigo',
+  descripcion: 'descripcion',
+  precioUnitario: 'precioUnitario',
+  unidad: 'unidad',
+  activo: 'activo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ItemServicioScalarFieldEnum = (typeof ItemServicioScalarFieldEnum)[keyof typeof ItemServicioScalarFieldEnum]
+
+
+export const PresupuestoScalarFieldEnum = {
+  id: 'id',
+  numero: 'numero',
+  clienteId: 'clienteId',
+  estado: 'estado',
+  fechaEmision: 'fechaEmision',
+  validezDias: 'validezDias',
+  fechaVencimiento: 'fechaVencimiento',
+  notas: 'notas',
+  subtotal: 'subtotal',
+  ivaPorcentaje: 'ivaPorcentaje',
+  ivaImporte: 'ivaImporte',
+  total: 'total',
+  creadoPorId: 'creadoPorId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PresupuestoScalarFieldEnum = (typeof PresupuestoScalarFieldEnum)[keyof typeof PresupuestoScalarFieldEnum]
+
+
+export const PresupuestoItemScalarFieldEnum = {
+  id: 'id',
+  presupuestoId: 'presupuestoId',
+  itemServicioId: 'itemServicioId',
+  descripcionCustom: 'descripcionCustom',
+  cantidad: 'cantidad',
+  precioUnitario: 'precioUnitario',
+  subtotal: 'subtotal',
+  orden: 'orden'
+} as const
+
+export type PresupuestoItemScalarFieldEnum = (typeof PresupuestoItemScalarFieldEnum)[keyof typeof PresupuestoItemScalarFieldEnum]
+
+
+export const ImpuestoScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  porcentaje: 'porcentaje',
+  activo: 'activo',
+  esDefault: 'esDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ImpuestoScalarFieldEnum = (typeof ImpuestoScalarFieldEnum)[keyof typeof ImpuestoScalarFieldEnum]
+
+
+export const AlmacenScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  ubicacion: 'ubicacion',
+  encargadoId: 'encargadoId',
+  activo: 'activo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AlmacenScalarFieldEnum = (typeof AlmacenScalarFieldEnum)[keyof typeof AlmacenScalarFieldEnum]
+
+
+export const ProductoScalarFieldEnum = {
+  id: 'id',
+  codigo: 'codigo',
+  nombre: 'nombre',
+  descripcion: 'descripcion',
+  categoria: 'categoria',
+  unidad: 'unidad',
+  stockMinimo: 'stockMinimo',
+  esHerramienta: 'esHerramienta',
+  activo: 'activo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductoScalarFieldEnum = (typeof ProductoScalarFieldEnum)[keyof typeof ProductoScalarFieldEnum]
+
+
+export const StockProductoScalarFieldEnum = {
+  id: 'id',
+  almacenId: 'almacenId',
+  productoId: 'productoId',
+  cantidad: 'cantidad',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StockProductoScalarFieldEnum = (typeof StockProductoScalarFieldEnum)[keyof typeof StockProductoScalarFieldEnum]
+
+
+export const MovimientoStockScalarFieldEnum = {
+  id: 'id',
+  almacenId: 'almacenId',
+  productoId: 'productoId',
+  empleadoId: 'empleadoId',
+  tipo: 'tipo',
+  cantidad: 'cantidad',
+  motivo: 'motivo',
+  referencia: 'referencia',
+  fecha: 'fecha',
+  createdAt: 'createdAt'
+} as const
+
+export type MovimientoStockScalarFieldEnum = (typeof MovimientoStockScalarFieldEnum)[keyof typeof MovimientoStockScalarFieldEnum]
+
+
+export const AsignacionHerramientaScalarFieldEnum = {
+  id: 'id',
+  productoId: 'productoId',
+  empleadoId: 'empleadoId',
+  cantidad: 'cantidad',
+  fechaAsignacion: 'fechaAsignacion',
+  fechaDevolucion: 'fechaDevolucion',
+  notas: 'notas'
+} as const
+
+export type AsignacionHerramientaScalarFieldEnum = (typeof AsignacionHerramientaScalarFieldEnum)[keyof typeof AsignacionHerramientaScalarFieldEnum]
+
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+} as const
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

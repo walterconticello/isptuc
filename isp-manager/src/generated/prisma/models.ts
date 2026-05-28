@@ -8,4 +8,21 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Empresa'
+export type * from './models/Empleado'
+export type * from './models/PermisoModulo'
+export type * from './models/Vehiculo'
+export type * from './models/Cuadrilla'
+export type * from './models/MiembroCuadrilla'
+export type * from './models/RegistroCombustible'
+export type * from './models/Cliente'
+export type * from './models/ItemServicio'
+export type * from './models/Presupuesto'
+export type * from './models/PresupuestoItem'
+export type * from './models/Impuesto'
+export type * from './models/Almacen'
+export type * from './models/Producto'
+export type * from './models/StockProducto'
+export type * from './models/MovimientoStock'
+export type * from './models/AsignacionHerramienta'
 export type * from './commonInputTypes'

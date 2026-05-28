@@ -6,3 +6,336 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Rol {
+  DUENO
+  GERENTE
+  ADMIN
+  ADMINISTRATIVO
+  TECNICO
+}
+
+enum Modulo {
+  DASHBOARD
+  EMPLEADOS
+  FLOTA
+  COMBUSTIBLE
+  CUADRILLAS
+  PRESUPUESTOS
+  CLIENTES
+  ITEMS
+  STOCK
+  ADMIN
+}
+
+enum TipoVehiculo {
+  AUTO
+  CAMIONETA
+  MOTO
+  FURGON
+}
+
+enum EstadoVehiculo {
+  ACTIVO
+  MANTENIMIENTO
+  INACTIVO
+}
+
+enum EstadoCuadrilla {
+  ACTIVA
+  INACTIVA
+}
+
+enum TipoCombustible {
+  NAFTA
+  DIESEL
+  GNC
+  PREMIUM
+}
+
+enum EstadoPresupuesto {
+  BORRADOR
+  ENVIADO
+  ACEPTADO
+  RECHAZADO
+}
+
+enum CategoriaProducto {
+  RED
+  FIBRA_OPTICA
+  HERRAJE
+  HERRAMIENTA
+  MATERIAL_ELECTRICO
+  CONSUMIBLE
+  OTRO
+}
+
+enum TipoMovimiento {
+  ENTRADA
+  SALIDA
+  AJUSTE
+  TRANSFERENCIA
+}
+
+// ─── Core ────────────────────────────────────────────────────────────────────
+
+model Empresa {
+  id        String   @id @default(cuid())
+  nombre    String
+  cuit      String
+  direccion String?
+  telefono  String?
+  email     String?
+  logoUrl   String?
+  updatedAt DateTime @updatedAt
+}
+
+model Empleado {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  nombre       String
+  apellido     String
+  dni          String?  @unique
+  telefono     String?
+  rol          Rol
+  activo       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  cuadrillas            MiembroCuadrilla[]
+  registrosCombustible  RegistroCombustible[]
+  presupuestosCreados   Presupuesto[]
+  herramientasAsignadas AsignacionHerramienta[]
+  almacenesACargo       Almacen[]
+  movimientosStock      MovimientoStock[]
+}
+
+model PermisoModulo {
+  id     String  @id @default(cuid())
+  rol    Rol
+  modulo Modulo
+  puede  Boolean @default(false)
+
+  @@unique([rol, modulo])
+}
+
+// ─── Flota ───────────────────────────────────────────────────────────────────
+
+model Vehiculo {
+  id             String         @id @default(cuid())
+  patente        String         @unique
+  marca          String
+  modelo         String
+  anio           Int
+  tipo           TipoVehiculo
+  estado         EstadoVehiculo
+  odometroActual Float          @default(0)
+  cuadrillaId    String?
+  notas          String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  cuadrilla            Cuadrilla?            @relation(fields: [cuadrillaId], references: [id])
+  registrosCombustible RegistroCombustible[]
+}
+
+model Cuadrilla {
+  id          String          @id @default(cuid())
+  nombre      String
+  descripcion String?
+  estado      EstadoCuadrilla @default(ACTIVA)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  miembros  MiembroCuadrilla[]
+  vehiculos Vehiculo[]
+}
+
+model MiembroCuadrilla {
+  id          String   @id @default(cuid())
+  cuadrillaId String
+  empleadoId  String
+  esJefe      Boolean  @default(false)
+  desde       DateTime @default(now())
+
+  cuadrilla Cuadrilla @relation(fields: [cuadrillaId], references: [id], onDelete: Cascade)
+  empleado  Empleado  @relation(fields: [empleadoId], references: [id])
+
+  @@unique([cuadrillaId, empleadoId])
+}
+
+// ─── Combustible ─────────────────────────────────────────────────────────────
+
+model RegistroCombustible {
+  id              String          @id @default(cuid())
+  vehiculoId      String
+  empleadoId      String
+  fecha           DateTime
+  litros          Float
+  precioPorLitro  Float
+  costoTotal      Float
+  odometro        Float
+  kmDesdeUltimo   Float?
+  consumo         Float?
+  tipoCombustible TipoCombustible
+  estacion        String?
+  notas           String?
+  createdAt       DateTime        @default(now())
+
+  vehiculo Vehiculo @relation(fields: [vehiculoId], references: [id])
+  empleado Empleado @relation(fields: [empleadoId], references: [id])
+}
+
+// ─── Presupuestos ─────────────────────────────────────────────────────────────
+
+model Cliente {
+  id        String   @id @default(cuid())
+  nombre    String
+  cuit      String?
+  direccion String?
+  telefono  String?
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  presupuestos Presupuesto[]
+}
+
+model ItemServicio {
+  id             String   @id @default(cuid())
+  codigo         String?
+  descripcion    String
+  precioUnitario Decimal  @db.Decimal(10, 2)
+  unidad         String
+  activo         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  lineas PresupuestoItem[]
+}
+
+model Presupuesto {
+  id               String            @id @default(cuid())
+  numero           Int               @unique @default(autoincrement())
+  clienteId        String
+  estado           EstadoPresupuesto @default(BORRADOR)
+  fechaEmision     DateTime          @default(now())
+  validezDias      Int               @default(15)
+  fechaVencimiento DateTime
+  notas            String?
+  subtotal         Decimal           @db.Decimal(12, 2)
+  ivaPorcentaje    Decimal           @db.Decimal(5, 2)
+  ivaImporte       Decimal           @db.Decimal(12, 2)
+  total            Decimal           @db.Decimal(12, 2)
+  creadoPorId      String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  cliente   Cliente         @relation(fields: [clienteId], references: [id])
+  creadoPor Empleado        @relation(fields: [creadoPorId], references: [id])
+  items     PresupuestoItem[]
+}
+
+model PresupuestoItem {
+  id               String   @id @default(cuid())
+  presupuestoId    String
+  itemServicioId   String?
+  descripcionCustom String?
+  cantidad         Decimal  @db.Decimal(10, 2)
+  precioUnitario   Decimal  @db.Decimal(10, 2)
+  subtotal         Decimal  @db.Decimal(12, 2)
+  orden            Int
+
+  presupuesto  Presupuesto   @relation(fields: [presupuestoId], references: [id], onDelete: Cascade)
+  itemServicio ItemServicio? @relation(fields: [itemServicioId], references: [id])
+}
+
+model Impuesto {
+  id         String   @id @default(cuid())
+  nombre     String
+  porcentaje Decimal  @db.Decimal(5, 2)
+  activo     Boolean  @default(true)
+  esDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ─── Stock / Inventario ───────────────────────────────────────────────────────
+
+model Almacen {
+  id          String   @id @default(cuid())
+  nombre      String
+  ubicacion   String?
+  encargadoId String?
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  encargado   Empleado?        @relation(fields: [encargadoId], references: [id])
+  stock       StockProducto[]
+  movimientos MovimientoStock[]
+}
+
+model Producto {
+  id            String            @id @default(cuid())
+  codigo        String?           @unique
+  nombre        String
+  descripcion   String?
+  categoria     CategoriaProducto
+  unidad        String
+  stockMinimo   Int               @default(0)
+  esHerramienta Boolean           @default(false)
+  activo        Boolean           @default(true)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  stock        StockProducto[]
+  movimientos  MovimientoStock[]
+  asignaciones AsignacionHerramienta[]
+}
+
+model StockProducto {
+  id         String   @id @default(cuid())
+  almacenId  String
+  productoId String
+  cantidad   Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  almacen  Almacen  @relation(fields: [almacenId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
+
+  @@unique([almacenId, productoId])
+}
+
+model MovimientoStock {
+  id         String         @id @default(cuid())
+  almacenId  String
+  productoId String
+  empleadoId String
+  tipo       TipoMovimiento
+  cantidad   Int
+  motivo     String?
+  referencia String?
+  fecha      DateTime       @default(now())
+  createdAt  DateTime       @default(now())
+
+  almacen  Almacen  @relation(fields: [almacenId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
+  empleado Empleado @relation(fields: [empleadoId], references: [id])
+}
+
+model AsignacionHerramienta {
+  id              String    @id @default(cuid())
+  productoId      String
+  empleadoId      String
+  cantidad        Int       @default(1)
+  fechaAsignacion DateTime  @default(now())
+  fechaDevolucion DateTime?
+  notas           String?
+
+  producto Producto @relation(fields: [productoId], references: [id])
+  empleado Empleado @relation(fields: [empleadoId], references: [id])
+}

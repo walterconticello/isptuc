@@ -31,8 +31,8 @@ export * from "./enums"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Empresas
+ * const empresas = await prisma.empresa.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -41,4 +41,88 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
-
+/**
+ * Model Empresa
+ * 
+ */
+export type Empresa = Prisma.EmpresaModel
+/**
+ * Model Empleado
+ * 
+ */
+export type Empleado = Prisma.EmpleadoModel
+/**
+ * Model PermisoModulo
+ * 
+ */
+export type PermisoModulo = Prisma.PermisoModuloModel
+/**
+ * Model Vehiculo
+ * 
+ */
+export type Vehiculo = Prisma.VehiculoModel
+/**
+ * Model Cuadrilla
+ * 
+ */
+export type Cuadrilla = Prisma.CuadrillaModel
+/**
+ * Model MiembroCuadrilla
+ * 
+ */
+export type MiembroCuadrilla = Prisma.MiembroCuadrillaModel
+/**
+ * Model RegistroCombustible
+ * 
+ */
+export type RegistroCombustible = Prisma.RegistroCombustibleModel
+/**
+ * Model Cliente
+ * 
+ */
+export type Cliente = Prisma.ClienteModel
+/**
+ * Model ItemServicio
+ * 
+ */
+export type ItemServicio = Prisma.ItemServicioModel
+/**
+ * Model Presupuesto
+ * 
+ */
+export type Presupuesto = Prisma.PresupuestoModel
+/**
+ * Model PresupuestoItem
+ * 
+ */
+export type PresupuestoItem = Prisma.PresupuestoItemModel
+/**
+ * Model Impuesto
+ * 
+ */
+export type Impuesto = Prisma.ImpuestoModel
+/**
+ * Model Almacen
+ * 
+ */
+export type Almacen = Prisma.AlmacenModel
+/**
+ * Model Producto
+ * 
+ */
+export type Producto = Prisma.ProductoModel
+/**
+ * Model StockProducto
+ * 
+ */
+export type StockProducto = Prisma.StockProductoModel
+/**
+ * Model MovimientoStock
+ * 
+ */
+export type MovimientoStock = Prisma.MovimientoStockModel
+/**
+ * Model AsignacionHerramienta
+ * 
+ */
+export type AsignacionHerramienta = Prisma.AsignacionHerramientaModel

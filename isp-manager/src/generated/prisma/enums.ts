@@ -9,7 +9,98 @@
 * 🟢 You can import this file directly.
 */
 
+export const Rol = {
+  DUENO: 'DUENO',
+  GERENTE: 'GERENTE',
+  ADMIN: 'ADMIN',
+  ADMINISTRATIVO: 'ADMINISTRATIVO',
+  TECNICO: 'TECNICO'
+} as const
+
+export type Rol = (typeof Rol)[keyof typeof Rol]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const Modulo = {
+  DASHBOARD: 'DASHBOARD',
+  EMPLEADOS: 'EMPLEADOS',
+  FLOTA: 'FLOTA',
+  COMBUSTIBLE: 'COMBUSTIBLE',
+  CUADRILLAS: 'CUADRILLAS',
+  PRESUPUESTOS: 'PRESUPUESTOS',
+  CLIENTES: 'CLIENTES',
+  ITEMS: 'ITEMS',
+  STOCK: 'STOCK',
+  ADMIN: 'ADMIN'
+} as const
+
+export type Modulo = (typeof Modulo)[keyof typeof Modulo]
+
+
+export const TipoVehiculo = {
+  AUTO: 'AUTO',
+  CAMIONETA: 'CAMIONETA',
+  MOTO: 'MOTO',
+  FURGON: 'FURGON'
+} as const
+
+export type TipoVehiculo = (typeof TipoVehiculo)[keyof typeof TipoVehiculo]
+
+
+export const EstadoVehiculo = {
+  ACTIVO: 'ACTIVO',
+  MANTENIMIENTO: 'MANTENIMIENTO',
+  INACTIVO: 'INACTIVO'
+} as const
+
+export type EstadoVehiculo = (typeof EstadoVehiculo)[keyof typeof EstadoVehiculo]
+
+
+export const EstadoCuadrilla = {
+  ACTIVA: 'ACTIVA',
+  INACTIVA: 'INACTIVA'
+} as const
+
+export type EstadoCuadrilla = (typeof EstadoCuadrilla)[keyof typeof EstadoCuadrilla]
+
+
+export const TipoCombustible = {
+  NAFTA: 'NAFTA',
+  DIESEL: 'DIESEL',
+  GNC: 'GNC',
+  PREMIUM: 'PREMIUM'
+} as const
+
+export type TipoCombustible = (typeof TipoCombustible)[keyof typeof TipoCombustible]
+
+
+export const EstadoPresupuesto = {
+  BORRADOR: 'BORRADOR',
+  ENVIADO: 'ENVIADO',
+  ACEPTADO: 'ACEPTADO',
+  RECHAZADO: 'RECHAZADO'
+} as const
+
+export type EstadoPresupuesto = (typeof EstadoPresupuesto)[keyof typeof EstadoPresupuesto]
+
+
+export const CategoriaProducto = {
+  RED: 'RED',
+  FIBRA_OPTICA: 'FIBRA_OPTICA',
+  HERRAJE: 'HERRAJE',
+  HERRAMIENTA: 'HERRAMIENTA',
+  MATERIAL_ELECTRICO: 'MATERIAL_ELECTRICO',
+  CONSUMIBLE: 'CONSUMIBLE',
+  OTRO: 'OTRO'
+} as const
+
+export type CategoriaProducto = (typeof CategoriaProducto)[keyof typeof CategoriaProducto]
+
+
+export const TipoMovimiento = {
+  ENTRADA: 'ENTRADA',
+  SALIDA: 'SALIDA',
+  AJUSTE: 'AJUSTE',
+  TRANSFERENCIA: 'TRANSFERENCIA'
+} as const
+
+export type TipoMovimiento = (typeof TipoMovimiento)[keyof typeof TipoMovimiento]
