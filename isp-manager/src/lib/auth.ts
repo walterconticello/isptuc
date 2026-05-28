@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { loginSchema } from "@/lib/validations";
+import { logAudit } from "@/lib/audit";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -19,17 +20,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { email: parsed.data.email },
         });
 
-        if (!empleado) return null;
+        if (!empleado) {
+          await logAudit({ accion: "LOGIN_FALLIDO", modulo: "AUTH", detalles: { email: parsed.data.email, motivo: "email no encontrado" } });
+          return null;
+        }
 
         if (!empleado.activo) {
+          await logAudit({ empleadoId: empleado.id, accion: "LOGIN_FALLIDO", modulo: "AUTH", detalles: { motivo: "cuenta inactiva" } });
           throw new Error("CUENTA_INACTIVA");
         }
 
-        const passwordOk = await bcrypt.compare(
-          parsed.data.password,
-          empleado.passwordHash
-        );
-        if (!passwordOk) return null;
+        const passwordOk = await bcrypt.compare(parsed.data.password, empleado.passwordHash);
+        if (!passwordOk) {
+          await logAudit({ empleadoId: empleado.id, accion: "LOGIN_FALLIDO", modulo: "AUTH", detalles: { motivo: "contraseña incorrecta" } });
+          return null;
+        }
+
+        await logAudit({ empleadoId: empleado.id, accion: "LOGIN_EXITOSO", modulo: "AUTH", entidadNombre: `${empleado.nombre} ${empleado.apellido}` });
 
         return {
           id: empleado.id,

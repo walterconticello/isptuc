@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { checkPermission } from "@/lib/permissions";
 import { cuadrillaSchema } from "@/lib/validations";
@@ -63,6 +64,7 @@ export async function createCuadrilla(rawData: unknown): Promise<ActionResult<{ 
     },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "CREAR_CUADRILLA", modulo: "CUADRILLAS", entidadId: cuadrilla.id, entidadNombre: cuadrilla.nombre });
   revalidatePath("/cuadrillas");
   return { success: true, data: { id: cuadrilla.id } };
 }
@@ -96,6 +98,7 @@ export async function toggleEstadoCuadrilla(id: string): Promise<ActionResult> {
     : EstadoCuadrilla.ACTIVA;
 
   await db.cuadrilla.update({ where: { id }, data: { estado: nuevoEstado } });
+  void logAudit({ empleadoId: session.user.id, accion: nuevoEstado === EstadoCuadrilla.ACTIVA ? "ACTIVAR_CUADRILLA" : "DESACTIVAR_CUADRILLA", modulo: "CUADRILLAS", entidadId: id });
   revalidatePath("/cuadrillas");
   revalidatePath(`/cuadrillas/${id}`);
   return { success: true, data: undefined };
@@ -111,6 +114,7 @@ export async function agregarMiembro(cuadrillaId: string, empleadoId: string, es
   if (existe) return { success: false, error: "El empleado ya es miembro de esta cuadrilla" };
 
   await db.miembroCuadrilla.create({ data: { cuadrillaId, empleadoId, esJefe } });
+  void logAudit({ empleadoId: session.user.id, accion: "AGREGAR_MIEMBRO_CUADRILLA", modulo: "CUADRILLAS", entidadId: cuadrillaId, detalles: { empleadoAgregadoId: empleadoId, esJefe } });
   revalidatePath(`/cuadrillas/${cuadrillaId}`);
   return { success: true, data: undefined };
 }
@@ -122,6 +126,7 @@ export async function removerMiembro(cuadrillaId: string, empleadoId: string): P
   await db.miembroCuadrilla.delete({
     where: { cuadrillaId_empleadoId: { cuadrillaId, empleadoId } },
   });
+  void logAudit({ empleadoId: session.user.id, accion: "REMOVER_MIEMBRO_CUADRILLA", modulo: "CUADRILLAS", entidadId: cuadrillaId, detalles: { empleadoRemovidoId: empleadoId } });
   revalidatePath(`/cuadrillas/${cuadrillaId}`);
   return { success: true, data: undefined };
 }

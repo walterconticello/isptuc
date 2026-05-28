@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { Modulo } from "@/generated/prisma/client";
-import { Shield, Building2 } from "lucide-react";
+import { Shield, Building2, ScrollText } from "lucide-react";
 
 export default async function AdminPage() {
   const session = await auth();
@@ -31,6 +31,12 @@ export default async function AdminPage() {
           icon={<Building2 className="h-6 w-6" />}
           title="Datos de la Empresa"
           description="Nombre, CUIT, logo y datos de contacto"
+        />
+        <AdminCard
+          href="/admin/auditoria"
+          icon={<ScrollText className="h-6 w-6" />}
+          title="Auditoría del sistema"
+          description="Registro completo de todas las acciones realizadas"
         />
       </div>
     </div>

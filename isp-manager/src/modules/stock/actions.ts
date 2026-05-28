@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { z } from "zod";
 import { Modulo, CategoriaProducto, TipoMovimiento } from "@/generated/prisma/client";
@@ -105,6 +106,7 @@ export async function createAlmacen(rawData: unknown): Promise<ActionResult<{ id
       encargadoId: parsed.data.encargadoId || null,
     },
   });
+  void logAudit({ empleadoId: session.user.id, accion: "CREAR_ALMACEN", modulo: "STOCK", entidadId: almacen.id, entidadNombre: almacen.nombre });
   revalidatePath("/stock/almacenes");
   return { success: true, data: { id: almacen.id } };
 }
@@ -196,6 +198,7 @@ export async function createProducto(rawData: unknown): Promise<ActionResult<{ i
       contenidoPorUnidad: parsed.data.contenidoPorUnidad ?? null,
     },
   });
+  void logAudit({ empleadoId: session.user.id, accion: "CREAR_PRODUCTO", modulo: "STOCK", entidadId: producto.id, entidadNombre: producto.nombre, detalles: { categoria: producto.categoria, unidad: producto.unidad } });
   revalidatePath("/stock/productos");
   return { success: true, data: { id: producto.id } };
 }
@@ -312,6 +315,7 @@ export async function registrarMovimiento(rawData: unknown): Promise<ActionResul
     }
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "REGISTRAR_MOVIMIENTO_STOCK", modulo: "STOCK", entidadId: productoId, detalles: { almacenId, tipo, cantidad: tipo === "SALIDA" || tipo === "TRANSFERENCIA" ? -cantidad : cantidad, motivo, almacenDestinoId } });
   revalidatePath("/stock");
   revalidatePath(`/stock/productos/${productoId}`);
   revalidatePath(`/stock/almacenes/${almacenId}`);
@@ -350,6 +354,7 @@ export async function asignarHerramienta(rawData: unknown): Promise<ActionResult
       notas: parsed.data.notas || null,
     },
   });
+  void logAudit({ empleadoId: session.user.id, accion: "ASIGNAR_HERRAMIENTA", modulo: "STOCK", entidadId: parsed.data.productoId, detalles: { empleadoAsignadoId: parsed.data.empleadoId, cantidad: parsed.data.cantidad } });
   revalidatePath("/stock/herramientas");
   return { success: true, data: undefined };
 }
@@ -362,6 +367,7 @@ export async function devolverHerramienta(id: string): Promise<ActionResult> {
     where: { id },
     data: { fechaDevolucion: new Date() },
   });
+  void logAudit({ empleadoId: session.user.id, accion: "DEVOLVER_HERRAMIENTA", modulo: "STOCK", entidadId: id });
   revalidatePath("/stock/herramientas");
   return { success: true, data: undefined };
 }

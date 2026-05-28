@@ -8,6 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/AuditLog'
 export type * from './models/Empresa'
 export type * from './models/Empleado'
 export type * from './models/PermisoModulo'

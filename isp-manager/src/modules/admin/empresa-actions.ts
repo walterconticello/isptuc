@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { z } from "zod";
 import { Modulo } from "@/generated/prisma/client";
@@ -48,6 +49,7 @@ export async function updateEmpresa(rawData: unknown) {
     await db.empresa.create({ data: { ...data, id: "empresa-principal" } });
   }
 
+  void logAudit({ empleadoId: session.user.id, accion: "ACTUALIZAR_EMPRESA", modulo: "ADMIN", entidadNombre: parsed.data.nombre });
   revalidatePath("/admin/empresa");
   revalidatePath("/dashboard");
   return { success: true as const, data: undefined };

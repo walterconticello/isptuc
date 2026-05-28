@@ -236,6 +236,7 @@ export type EmpleadoWhereInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaListRelationFilter
   almacenesACargo?: Prisma.AlmacenListRelationFilter
   movimientosStock?: Prisma.MovimientoStockListRelationFilter
+  auditLogs?: Prisma.AuditLogListRelationFilter
 }
 
 export type EmpleadoOrderByWithRelationInput = {
@@ -256,6 +257,7 @@ export type EmpleadoOrderByWithRelationInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaOrderByRelationAggregateInput
   almacenesACargo?: Prisma.AlmacenOrderByRelationAggregateInput
   movimientosStock?: Prisma.MovimientoStockOrderByRelationAggregateInput
+  auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
 }
 
 export type EmpleadoWhereUniqueInput = Prisma.AtLeast<{
@@ -279,6 +281,7 @@ export type EmpleadoWhereUniqueInput = Prisma.AtLeast<{
   herramientasAsignadas?: Prisma.AsignacionHerramientaListRelationFilter
   almacenesACargo?: Prisma.AlmacenListRelationFilter
   movimientosStock?: Prisma.MovimientoStockListRelationFilter
+  auditLogs?: Prisma.AuditLogListRelationFilter
 }, "id" | "email" | "dni">
 
 export type EmpleadoOrderByWithAggregationInput = {
@@ -333,6 +336,7 @@ export type EmpleadoCreateInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoUncheckedCreateInput = {
@@ -353,6 +357,7 @@ export type EmpleadoUncheckedCreateInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenUncheckedCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockUncheckedCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoUpdateInput = {
@@ -373,6 +378,7 @@ export type EmpleadoUpdateInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoUncheckedUpdateInput = {
@@ -393,6 +399,7 @@ export type EmpleadoUncheckedUpdateInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUncheckedUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUncheckedUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoCreateManyInput = {
@@ -435,6 +442,11 @@ export type EmpleadoUncheckedUpdateManyInput = {
   activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type EmpleadoNullableScalarRelationFilter = {
+  is?: Prisma.EmpleadoWhereInput | null
+  isNot?: Prisma.EmpleadoWhereInput | null
 }
 
 export type EmpleadoCountOrderByAggregateInput = {
@@ -484,9 +496,20 @@ export type EmpleadoScalarRelationFilter = {
   isNot?: Prisma.EmpleadoWhereInput
 }
 
-export type EmpleadoNullableScalarRelationFilter = {
-  is?: Prisma.EmpleadoWhereInput | null
-  isNot?: Prisma.EmpleadoWhereInput | null
+export type EmpleadoCreateNestedOneWithoutAuditLogsInput = {
+  create?: Prisma.XOR<Prisma.EmpleadoCreateWithoutAuditLogsInput, Prisma.EmpleadoUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.EmpleadoCreateOrConnectWithoutAuditLogsInput
+  connect?: Prisma.EmpleadoWhereUniqueInput
+}
+
+export type EmpleadoUpdateOneWithoutAuditLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.EmpleadoCreateWithoutAuditLogsInput, Prisma.EmpleadoUncheckedCreateWithoutAuditLogsInput>
+  connectOrCreate?: Prisma.EmpleadoCreateOrConnectWithoutAuditLogsInput
+  upsert?: Prisma.EmpleadoUpsertWithoutAuditLogsInput
+  disconnect?: Prisma.EmpleadoWhereInput | boolean
+  delete?: Prisma.EmpleadoWhereInput | boolean
+  connect?: Prisma.EmpleadoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EmpleadoUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.EmpleadoUpdateWithoutAuditLogsInput>, Prisma.EmpleadoUncheckedUpdateWithoutAuditLogsInput>
 }
 
 export type EnumRolFieldUpdateOperationsInput = {
@@ -583,6 +606,102 @@ export type EmpleadoUpdateOneRequiredWithoutHerramientasAsignadasNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.EmpleadoUpdateToOneWithWhereWithoutHerramientasAsignadasInput, Prisma.EmpleadoUpdateWithoutHerramientasAsignadasInput>, Prisma.EmpleadoUncheckedUpdateWithoutHerramientasAsignadasInput>
 }
 
+export type EmpleadoCreateWithoutAuditLogsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  nombre: string
+  apellido: string
+  dni?: string | null
+  telefono?: string | null
+  rol: $Enums.Rol
+  activo?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  cuadrillas?: Prisma.MiembroCuadrillaCreateNestedManyWithoutEmpleadoInput
+  registrosCombustible?: Prisma.RegistroCombustibleCreateNestedManyWithoutEmpleadoInput
+  presupuestosCreados?: Prisma.PresupuestoCreateNestedManyWithoutCreadoPorInput
+  herramientasAsignadas?: Prisma.AsignacionHerramientaCreateNestedManyWithoutEmpleadoInput
+  almacenesACargo?: Prisma.AlmacenCreateNestedManyWithoutEncargadoInput
+  movimientosStock?: Prisma.MovimientoStockCreateNestedManyWithoutEmpleadoInput
+}
+
+export type EmpleadoUncheckedCreateWithoutAuditLogsInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  nombre: string
+  apellido: string
+  dni?: string | null
+  telefono?: string | null
+  rol: $Enums.Rol
+  activo?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  cuadrillas?: Prisma.MiembroCuadrillaUncheckedCreateNestedManyWithoutEmpleadoInput
+  registrosCombustible?: Prisma.RegistroCombustibleUncheckedCreateNestedManyWithoutEmpleadoInput
+  presupuestosCreados?: Prisma.PresupuestoUncheckedCreateNestedManyWithoutCreadoPorInput
+  herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedCreateNestedManyWithoutEmpleadoInput
+  almacenesACargo?: Prisma.AlmacenUncheckedCreateNestedManyWithoutEncargadoInput
+  movimientosStock?: Prisma.MovimientoStockUncheckedCreateNestedManyWithoutEmpleadoInput
+}
+
+export type EmpleadoCreateOrConnectWithoutAuditLogsInput = {
+  where: Prisma.EmpleadoWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmpleadoCreateWithoutAuditLogsInput, Prisma.EmpleadoUncheckedCreateWithoutAuditLogsInput>
+}
+
+export type EmpleadoUpsertWithoutAuditLogsInput = {
+  update: Prisma.XOR<Prisma.EmpleadoUpdateWithoutAuditLogsInput, Prisma.EmpleadoUncheckedUpdateWithoutAuditLogsInput>
+  create: Prisma.XOR<Prisma.EmpleadoCreateWithoutAuditLogsInput, Prisma.EmpleadoUncheckedCreateWithoutAuditLogsInput>
+  where?: Prisma.EmpleadoWhereInput
+}
+
+export type EmpleadoUpdateToOneWithWhereWithoutAuditLogsInput = {
+  where?: Prisma.EmpleadoWhereInput
+  data: Prisma.XOR<Prisma.EmpleadoUpdateWithoutAuditLogsInput, Prisma.EmpleadoUncheckedUpdateWithoutAuditLogsInput>
+}
+
+export type EmpleadoUpdateWithoutAuditLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  apellido?: Prisma.StringFieldUpdateOperationsInput | string
+  dni?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telefono?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rol?: Prisma.EnumRolFieldUpdateOperationsInput | $Enums.Rol
+  activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cuadrillas?: Prisma.MiembroCuadrillaUpdateManyWithoutEmpleadoNestedInput
+  registrosCombustible?: Prisma.RegistroCombustibleUpdateManyWithoutEmpleadoNestedInput
+  presupuestosCreados?: Prisma.PresupuestoUpdateManyWithoutCreadoPorNestedInput
+  herramientasAsignadas?: Prisma.AsignacionHerramientaUpdateManyWithoutEmpleadoNestedInput
+  almacenesACargo?: Prisma.AlmacenUpdateManyWithoutEncargadoNestedInput
+  movimientosStock?: Prisma.MovimientoStockUpdateManyWithoutEmpleadoNestedInput
+}
+
+export type EmpleadoUncheckedUpdateWithoutAuditLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  apellido?: Prisma.StringFieldUpdateOperationsInput | string
+  dni?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telefono?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  rol?: Prisma.EnumRolFieldUpdateOperationsInput | $Enums.Rol
+  activo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cuadrillas?: Prisma.MiembroCuadrillaUncheckedUpdateManyWithoutEmpleadoNestedInput
+  registrosCombustible?: Prisma.RegistroCombustibleUncheckedUpdateManyWithoutEmpleadoNestedInput
+  presupuestosCreados?: Prisma.PresupuestoUncheckedUpdateManyWithoutCreadoPorNestedInput
+  herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedUpdateManyWithoutEmpleadoNestedInput
+  almacenesACargo?: Prisma.AlmacenUncheckedUpdateManyWithoutEncargadoNestedInput
+  movimientosStock?: Prisma.MovimientoStockUncheckedUpdateManyWithoutEmpleadoNestedInput
+}
+
 export type EmpleadoCreateWithoutCuadrillasInput = {
   id?: string
   email: string
@@ -600,6 +719,7 @@ export type EmpleadoCreateWithoutCuadrillasInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoUncheckedCreateWithoutCuadrillasInput = {
@@ -619,6 +739,7 @@ export type EmpleadoUncheckedCreateWithoutCuadrillasInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenUncheckedCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockUncheckedCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoCreateOrConnectWithoutCuadrillasInput = {
@@ -654,6 +775,7 @@ export type EmpleadoUpdateWithoutCuadrillasInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoUncheckedUpdateWithoutCuadrillasInput = {
@@ -673,6 +795,7 @@ export type EmpleadoUncheckedUpdateWithoutCuadrillasInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUncheckedUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUncheckedUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoCreateWithoutRegistrosCombustibleInput = {
@@ -692,6 +815,7 @@ export type EmpleadoCreateWithoutRegistrosCombustibleInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoUncheckedCreateWithoutRegistrosCombustibleInput = {
@@ -711,6 +835,7 @@ export type EmpleadoUncheckedCreateWithoutRegistrosCombustibleInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenUncheckedCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockUncheckedCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoCreateOrConnectWithoutRegistrosCombustibleInput = {
@@ -746,6 +871,7 @@ export type EmpleadoUpdateWithoutRegistrosCombustibleInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoUncheckedUpdateWithoutRegistrosCombustibleInput = {
@@ -765,6 +891,7 @@ export type EmpleadoUncheckedUpdateWithoutRegistrosCombustibleInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUncheckedUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUncheckedUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoCreateWithoutPresupuestosCreadosInput = {
@@ -784,6 +911,7 @@ export type EmpleadoCreateWithoutPresupuestosCreadosInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoUncheckedCreateWithoutPresupuestosCreadosInput = {
@@ -803,6 +931,7 @@ export type EmpleadoUncheckedCreateWithoutPresupuestosCreadosInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenUncheckedCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockUncheckedCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoCreateOrConnectWithoutPresupuestosCreadosInput = {
@@ -838,6 +967,7 @@ export type EmpleadoUpdateWithoutPresupuestosCreadosInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoUncheckedUpdateWithoutPresupuestosCreadosInput = {
@@ -857,6 +987,7 @@ export type EmpleadoUncheckedUpdateWithoutPresupuestosCreadosInput = {
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUncheckedUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUncheckedUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoCreateWithoutAlmacenesACargoInput = {
@@ -876,6 +1007,7 @@ export type EmpleadoCreateWithoutAlmacenesACargoInput = {
   presupuestosCreados?: Prisma.PresupuestoCreateNestedManyWithoutCreadoPorInput
   herramientasAsignadas?: Prisma.AsignacionHerramientaCreateNestedManyWithoutEmpleadoInput
   movimientosStock?: Prisma.MovimientoStockCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoUncheckedCreateWithoutAlmacenesACargoInput = {
@@ -895,6 +1027,7 @@ export type EmpleadoUncheckedCreateWithoutAlmacenesACargoInput = {
   presupuestosCreados?: Prisma.PresupuestoUncheckedCreateNestedManyWithoutCreadoPorInput
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedCreateNestedManyWithoutEmpleadoInput
   movimientosStock?: Prisma.MovimientoStockUncheckedCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoCreateOrConnectWithoutAlmacenesACargoInput = {
@@ -930,6 +1063,7 @@ export type EmpleadoUpdateWithoutAlmacenesACargoInput = {
   presupuestosCreados?: Prisma.PresupuestoUpdateManyWithoutCreadoPorNestedInput
   herramientasAsignadas?: Prisma.AsignacionHerramientaUpdateManyWithoutEmpleadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoUncheckedUpdateWithoutAlmacenesACargoInput = {
@@ -949,6 +1083,7 @@ export type EmpleadoUncheckedUpdateWithoutAlmacenesACargoInput = {
   presupuestosCreados?: Prisma.PresupuestoUncheckedUpdateManyWithoutCreadoPorNestedInput
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedUpdateManyWithoutEmpleadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUncheckedUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoCreateWithoutMovimientosStockInput = {
@@ -968,6 +1103,7 @@ export type EmpleadoCreateWithoutMovimientosStockInput = {
   presupuestosCreados?: Prisma.PresupuestoCreateNestedManyWithoutCreadoPorInput
   herramientasAsignadas?: Prisma.AsignacionHerramientaCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenCreateNestedManyWithoutEncargadoInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoUncheckedCreateWithoutMovimientosStockInput = {
@@ -987,6 +1123,7 @@ export type EmpleadoUncheckedCreateWithoutMovimientosStockInput = {
   presupuestosCreados?: Prisma.PresupuestoUncheckedCreateNestedManyWithoutCreadoPorInput
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedCreateNestedManyWithoutEmpleadoInput
   almacenesACargo?: Prisma.AlmacenUncheckedCreateNestedManyWithoutEncargadoInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoCreateOrConnectWithoutMovimientosStockInput = {
@@ -1022,6 +1159,7 @@ export type EmpleadoUpdateWithoutMovimientosStockInput = {
   presupuestosCreados?: Prisma.PresupuestoUpdateManyWithoutCreadoPorNestedInput
   herramientasAsignadas?: Prisma.AsignacionHerramientaUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUpdateManyWithoutEncargadoNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoUncheckedUpdateWithoutMovimientosStockInput = {
@@ -1041,6 +1179,7 @@ export type EmpleadoUncheckedUpdateWithoutMovimientosStockInput = {
   presupuestosCreados?: Prisma.PresupuestoUncheckedUpdateManyWithoutCreadoPorNestedInput
   herramientasAsignadas?: Prisma.AsignacionHerramientaUncheckedUpdateManyWithoutEmpleadoNestedInput
   almacenesACargo?: Prisma.AlmacenUncheckedUpdateManyWithoutEncargadoNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoCreateWithoutHerramientasAsignadasInput = {
@@ -1060,6 +1199,7 @@ export type EmpleadoCreateWithoutHerramientasAsignadasInput = {
   presupuestosCreados?: Prisma.PresupuestoCreateNestedManyWithoutCreadoPorInput
   almacenesACargo?: Prisma.AlmacenCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoUncheckedCreateWithoutHerramientasAsignadasInput = {
@@ -1079,6 +1219,7 @@ export type EmpleadoUncheckedCreateWithoutHerramientasAsignadasInput = {
   presupuestosCreados?: Prisma.PresupuestoUncheckedCreateNestedManyWithoutCreadoPorInput
   almacenesACargo?: Prisma.AlmacenUncheckedCreateNestedManyWithoutEncargadoInput
   movimientosStock?: Prisma.MovimientoStockUncheckedCreateNestedManyWithoutEmpleadoInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutEmpleadoInput
 }
 
 export type EmpleadoCreateOrConnectWithoutHerramientasAsignadasInput = {
@@ -1114,6 +1255,7 @@ export type EmpleadoUpdateWithoutHerramientasAsignadasInput = {
   presupuestosCreados?: Prisma.PresupuestoUpdateManyWithoutCreadoPorNestedInput
   almacenesACargo?: Prisma.AlmacenUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutEmpleadoNestedInput
 }
 
 export type EmpleadoUncheckedUpdateWithoutHerramientasAsignadasInput = {
@@ -1133,6 +1275,7 @@ export type EmpleadoUncheckedUpdateWithoutHerramientasAsignadasInput = {
   presupuestosCreados?: Prisma.PresupuestoUncheckedUpdateManyWithoutCreadoPorNestedInput
   almacenesACargo?: Prisma.AlmacenUncheckedUpdateManyWithoutEncargadoNestedInput
   movimientosStock?: Prisma.MovimientoStockUncheckedUpdateManyWithoutEmpleadoNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutEmpleadoNestedInput
 }
 
 
@@ -1147,6 +1290,7 @@ export type EmpleadoCountOutputType = {
   herramientasAsignadas: number
   almacenesACargo: number
   movimientosStock: number
+  auditLogs: number
 }
 
 export type EmpleadoCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1156,6 +1300,7 @@ export type EmpleadoCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   herramientasAsignadas?: boolean | EmpleadoCountOutputTypeCountHerramientasAsignadasArgs
   almacenesACargo?: boolean | EmpleadoCountOutputTypeCountAlmacenesACargoArgs
   movimientosStock?: boolean | EmpleadoCountOutputTypeCountMovimientosStockArgs
+  auditLogs?: boolean | EmpleadoCountOutputTypeCountAuditLogsArgs
 }
 
 /**
@@ -1210,6 +1355,13 @@ export type EmpleadoCountOutputTypeCountMovimientosStockArgs<ExtArgs extends run
   where?: Prisma.MovimientoStockWhereInput
 }
 
+/**
+ * EmpleadoCountOutputType without action
+ */
+export type EmpleadoCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AuditLogWhereInput
+}
+
 
 export type EmpleadoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1229,6 +1381,7 @@ export type EmpleadoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   herramientasAsignadas?: boolean | Prisma.Empleado$herramientasAsignadasArgs<ExtArgs>
   almacenesACargo?: boolean | Prisma.Empleado$almacenesACargoArgs<ExtArgs>
   movimientosStock?: boolean | Prisma.Empleado$movimientosStockArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.Empleado$auditLogsArgs<ExtArgs>
   _count?: boolean | Prisma.EmpleadoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["empleado"]>
 
@@ -1282,6 +1435,7 @@ export type EmpleadoInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   herramientasAsignadas?: boolean | Prisma.Empleado$herramientasAsignadasArgs<ExtArgs>
   almacenesACargo?: boolean | Prisma.Empleado$almacenesACargoArgs<ExtArgs>
   movimientosStock?: boolean | Prisma.Empleado$movimientosStockArgs<ExtArgs>
+  auditLogs?: boolean | Prisma.Empleado$auditLogsArgs<ExtArgs>
   _count?: boolean | Prisma.EmpleadoCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type EmpleadoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1296,6 +1450,7 @@ export type $EmpleadoPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     herramientasAsignadas: Prisma.$AsignacionHerramientaPayload<ExtArgs>[]
     almacenesACargo: Prisma.$AlmacenPayload<ExtArgs>[]
     movimientosStock: Prisma.$MovimientoStockPayload<ExtArgs>[]
+    auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1709,6 +1864,7 @@ export interface Prisma__EmpleadoClient<T, Null = never, ExtArgs extends runtime
   herramientasAsignadas<T extends Prisma.Empleado$herramientasAsignadasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Empleado$herramientasAsignadasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AsignacionHerramientaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   almacenesACargo<T extends Prisma.Empleado$almacenesACargoArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Empleado$almacenesACargoArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AlmacenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   movimientosStock<T extends Prisma.Empleado$movimientosStockArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Empleado$movimientosStockArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MovimientoStockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  auditLogs<T extends Prisma.Empleado$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Empleado$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2283,6 +2439,30 @@ export type Empleado$movimientosStockArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.MovimientoStockScalarFieldEnum | Prisma.MovimientoStockScalarFieldEnum[]
+}
+
+/**
+ * Empleado.auditLogs
+ */
+export type Empleado$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AuditLog
+   */
+  select?: Prisma.AuditLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AuditLog
+   */
+  omit?: Prisma.AuditLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AuditLogInclude<ExtArgs> | null
+  where?: Prisma.AuditLogWhereInput
+  orderBy?: Prisma.AuditLogOrderByWithRelationInput | Prisma.AuditLogOrderByWithRelationInput[]
+  cursor?: Prisma.AuditLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
 }
 
 /**

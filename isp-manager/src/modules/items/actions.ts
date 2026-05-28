@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { z } from "zod";
 import { Modulo } from "@/generated/prisma/client";
@@ -51,6 +52,7 @@ export async function createItem(rawData: unknown): Promise<ActionResult<{ id: s
     },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "CREAR_ITEM", modulo: "ITEMS", entidadId: item.id, entidadNombre: parsed.data.descripcion });
   revalidatePath("/items");
   return { success: true, data: { id: item.id } };
 }
@@ -72,6 +74,7 @@ export async function updateItem(id: string, rawData: unknown): Promise<ActionRe
     },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "EDITAR_ITEM", modulo: "ITEMS", entidadId: id, entidadNombre: parsed.data.descripcion });
   revalidatePath("/items");
   return { success: true, data: undefined };
 }
@@ -84,6 +87,7 @@ export async function toggleItemActivo(id: string): Promise<ActionResult> {
   if (!item) return { success: false, error: "Item no encontrado" };
 
   await db.itemServicio.update({ where: { id }, data: { activo: !item.activo } });
+  void logAudit({ empleadoId: session.user.id, accion: item.activo ? "DESACTIVAR_ITEM" : "ACTIVAR_ITEM", modulo: "ITEMS", entidadId: id });
   revalidatePath("/items");
   return { success: true, data: undefined };
 }

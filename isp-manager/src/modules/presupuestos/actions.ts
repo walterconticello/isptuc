@@ -1,10 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { checkPermission } from "@/lib/permissions";
+import { logAudit } from "@/lib/audit";
 import { z } from "zod";
 import { Modulo, EstadoPresupuesto } from "@/generated/prisma/client";
 
@@ -109,6 +109,7 @@ export async function createPresupuesto(rawData: unknown): Promise<ActionResult<
     },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "CREAR_PRESUPUESTO", modulo: "PRESUPUESTOS", entidadId: presupuesto.id, entidadNombre: `#${presupuesto.numero}`, detalles: { clienteId, total, ivaPorcentaje } });
   revalidatePath("/presupuestos");
   return { success: true, data: { id: presupuesto.id } };
 }
@@ -117,7 +118,9 @@ export async function cambiarEstado(id: string, estado: EstadoPresupuesto): Prom
   const { session, error } = await guardPresupuestos();
   if (!session) return { success: false, error: error! };
 
+  const anterior = await db.presupuesto.findUnique({ where: { id }, select: { estado: true, numero: true } });
   await db.presupuesto.update({ where: { id }, data: { estado } });
+  void logAudit({ empleadoId: session.user.id, accion: "CAMBIAR_ESTADO_PRESUPUESTO", modulo: "PRESUPUESTOS", entidadId: id, entidadNombre: anterior ? `#${anterior.numero}` : id, detalles: { estadoAnterior: anterior?.estado, estadoNuevo: estado } });
   revalidatePath("/presupuestos");
   revalidatePath(`/presupuestos/${id}`);
   return { success: true, data: undefined };

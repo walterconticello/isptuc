@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { Modulo, Rol } from "@/generated/prisma/client";
 
@@ -60,6 +61,7 @@ export async function togglePermiso(rol: Rol, modulo: Modulo): Promise<ActionRes
     data: { puede: !actual.puede },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "CAMBIAR_PERMISO", modulo: "ADMIN", detalles: { rol, modulo, anteriorPuede: actual.puede, nuevoPuede: !actual.puede } });
   revalidatePath("/admin/permisos");
   return { success: true, data: undefined };
 }

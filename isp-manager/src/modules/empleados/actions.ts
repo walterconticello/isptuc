@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { crearEmpleadoSchema, editarEmpleadoSchema } from "@/lib/validations";
 import { Modulo } from "@/generated/prisma/client";
@@ -87,6 +88,7 @@ export async function createEmpleado(rawData: unknown): Promise<ActionResult<{ i
     },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "CREAR_EMPLEADO", modulo: "EMPLEADOS", entidadId: empleado.id, entidadNombre: `${parsed.data.nombre} ${parsed.data.apellido}`, detalles: { rol: parsed.data.rol, email: parsed.data.email } });
   revalidatePath("/empleados");
   return { success: true, data: { id: empleado.id } };
 }
@@ -124,6 +126,7 @@ export async function updateEmpleado(id: string, rawData: unknown): Promise<Acti
 
   await db.empleado.update({ where: { id }, data: updateData });
 
+  void logAudit({ empleadoId: session.user.id, accion: "EDITAR_EMPLEADO", modulo: "EMPLEADOS", entidadId: id, entidadNombre: `${parsed.data.nombre} ${parsed.data.apellido}` });
   revalidatePath("/empleados");
   revalidatePath(`/empleados/${id}`);
   return { success: true, data: undefined };
@@ -145,6 +148,7 @@ export async function toggleEmpleadoActivo(id: string): Promise<ActionResult> {
 
   await db.empleado.update({ where: { id }, data: { activo: !empleado.activo } });
 
+  void logAudit({ empleadoId: session.user.id, accion: empleado.activo ? "DESACTIVAR_EMPLEADO" : "ACTIVAR_EMPLEADO", modulo: "EMPLEADOS", entidadId: id, detalles: { estadoNuevo: !empleado.activo } });
   revalidatePath("/empleados");
   return { success: true, data: undefined };
 }

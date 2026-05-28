@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { z } from "zod";
 import { Modulo } from "@/generated/prisma/client";
@@ -59,6 +60,7 @@ export async function createCliente(rawData: unknown): Promise<ActionResult<{ id
     },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "CREAR_CLIENTE", modulo: "CLIENTES", entidadId: cliente.id, entidadNombre: parsed.data.nombre });
   revalidatePath("/clientes");
   return { success: true, data: { id: cliente.id } };
 }
@@ -81,6 +83,7 @@ export async function updateCliente(id: string, rawData: unknown): Promise<Actio
     },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "EDITAR_CLIENTE", modulo: "CLIENTES", entidadId: id, entidadNombre: parsed.data.nombre });
   revalidatePath("/clientes");
   revalidatePath(`/clientes/${id}`);
   return { success: true, data: undefined };

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { combustibleSchema } from "@/lib/validations";
 import { Modulo, TipoCombustible } from "@/generated/prisma/client";
@@ -101,6 +102,7 @@ export async function createRegistroCombustible(rawData: unknown): Promise<Actio
     data: { odometroActual: parsed.data.odometro },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "REGISTRAR_COMBUSTIBLE", modulo: "COMBUSTIBLE", entidadId: registro.id, detalles: { vehiculoId: parsed.data.vehiculoId, litros: parsed.data.litros, costoTotal, odometro: parsed.data.odometro, tipoCombustible: parsed.data.tipoCombustible } });
   revalidatePath("/combustible");
   revalidatePath(`/flota/${parsed.data.vehiculoId}`);
   return { success: true, data: { id: registro.id } };

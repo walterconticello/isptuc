@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { checkPermission } from "@/lib/permissions";
 import { vehiculoSchema } from "@/lib/validations";
@@ -71,6 +72,7 @@ export async function createVehiculo(rawData: unknown): Promise<ActionResult<{ i
     },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "CREAR_VEHICULO", modulo: "FLOTA", entidadId: vehiculo.id, entidadNombre: `${parsed.data.patente} — ${parsed.data.marca} ${parsed.data.modelo}` });
   revalidatePath("/flota");
   return { success: true, data: { id: vehiculo.id } };
 }
@@ -97,6 +99,7 @@ export async function updateVehiculo(id: string, rawData: unknown): Promise<Acti
     },
   });
 
+  void logAudit({ empleadoId: session.user.id, accion: "EDITAR_VEHICULO", modulo: "FLOTA", entidadId: id, entidadNombre: `${parsed.data.patente}` });
   revalidatePath("/flota");
   revalidatePath(`/flota/${id}`);
   return { success: true, data: undefined };
