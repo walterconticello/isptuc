@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { getPermisosEmpleado } from "@/lib/permissions";
 import { SidebarContent } from "@/components/layout/sidebar-content";
 import { Header } from "@/components/layout/header";
+import { ThemeSelector } from "@/components/theme-selector";
 import { LogOut } from "lucide-react";
 import { signOut } from "@/lib/auth";
 
@@ -40,6 +41,9 @@ export default async function DashboardLayout({
         <div className="flex-1 overflow-y-auto">
           <SidebarContent modulosHabilitados={modulosHabilitados} />
         </div>
+
+        {/* Selector de tema */}
+        <ThemeSelector />
 
         {/* Usuario + logout */}
         <div className="border-t p-4">

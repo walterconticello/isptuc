@@ -4,6 +4,7 @@ import { signOut } from "next-auth/react";
 import { Menu, LogOut } from "lucide-react";
 import { type Session } from "next-auth";
 import { SidebarContent } from "./sidebar-content";
+import { ThemeSelector } from "@/components/theme-selector";
 import { Modulo } from "@/generated/prisma/client";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -67,6 +68,7 @@ export function Header({ session, modulosHabilitados }: HeaderProps) {
             <div className="flex-1 overflow-y-auto" onClick={() => setDrawerOpen(false)}>
               <SidebarContent modulosHabilitados={modulosHabilitados} />
             </div>
+            <ThemeSelector />
             <UserFooter nombre={nombre} apellido={apellido} rol={rol} />
           </aside>
         </>
