@@ -34,3 +34,12 @@ Thumbs.db
 
 # Prisma generated
 src/generated/prisma
+
+# Tool configs (local only)
+.claude/
+agent-skills/
+
+# Test artifacts
+test-results/
+verify-screenshots/
+playwright-report/
