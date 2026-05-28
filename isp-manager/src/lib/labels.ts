@@ -1,4 +1,4 @@
-import { Rol, TipoVehiculo, EstadoVehiculo, TipoCombustible, EstadoCuadrilla, CategoriaProducto, TipoMovimiento } from "@/generated/prisma/client";
+import { Rol, TipoVehiculo, EstadoVehiculo, TipoCombustible, EstadoCuadrilla, CategoriaProducto, TipoMovimiento } from "@/generated/prisma/enums";
 
 export const CATEGORIA_LABEL: Record<CategoriaProducto, string> = {
   RED:               "Red / Networking",

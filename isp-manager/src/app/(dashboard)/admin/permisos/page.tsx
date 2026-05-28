@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getPermisosMatrix } from "@/modules/admin/actions";
-import { Modulo, Rol } from "@/generated/prisma/client";
+import { Modulo, Rol } from "@/generated/prisma/enums";
 import { ROL_LABEL } from "@/lib/labels";
 import PermisosTable from "./table";
 import { ChevronLeft } from "lucide-react";

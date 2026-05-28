@@ -1,7 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
 import ProductoForm from "../../_components/producto-form";
 

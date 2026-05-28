@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getAlmacenes } from "@/modules/stock/actions";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import { Plus, Warehouse } from "lucide-react";
 
 export default async function AlmacenesPage() {

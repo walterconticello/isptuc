@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
-import { Modulo, Rol } from "@/generated/prisma/client";
+import { Modulo, Rol } from "@/generated/prisma/enums";
 
 type ActionResult<T = void> =
   | { success: true; data: T }

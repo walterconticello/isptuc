@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 
 export async function getPermisosEmpleado(empleadoId: string): Promise<Set<Modulo>> {
   const permisos = await db.permisoModulo.findMany({

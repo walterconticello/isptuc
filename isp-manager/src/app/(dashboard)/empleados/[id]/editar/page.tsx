@@ -2,7 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getEmpleadoById } from "@/modules/empleados/actions";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import EditarEmpleadoForm from "./form";
 
 export default async function EditarEmpleadoPage({

@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { crearEmpleadoSchema, editarEmpleadoSchema } from "@/lib/validations";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import bcrypt from "bcryptjs";
 
 type ActionResult<T = void> =

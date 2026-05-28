@@ -11,7 +11,7 @@ import {
   Settings,
   type LucideIcon,
 } from "lucide-react";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 
 export interface NavItem {
   modulo: Modulo;

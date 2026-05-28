@@ -5,7 +5,7 @@ import { Menu, LogOut } from "lucide-react";
 import { type Session } from "next-auth";
 import { SidebarContent } from "./sidebar-content";
 import { ThemeSelector } from "@/components/theme-selector";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 

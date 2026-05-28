@@ -7,7 +7,7 @@ import { updateEmpleado } from "@/modules/empleados/actions";
 import { editarEmpleadoSchema } from "@/lib/validations";
 import { ROL_LABEL } from "@/lib/labels";
 import { ChevronLeft } from "lucide-react";
-import { Rol } from "@/generated/prisma/client";
+import { Rol } from "@/generated/prisma/enums";
 
 const ROLES = ["DUENO", "GERENTE", "ADMIN", "ADMINISTRATIVO", "TECNICO"] as const;
 

@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { checkPermission } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { z } from "zod";
-import { Modulo, EstadoPresupuesto } from "@/generated/prisma/client";
+import { Modulo, EstadoPresupuesto } from "@/generated/prisma/enums";
 
 type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string };
 

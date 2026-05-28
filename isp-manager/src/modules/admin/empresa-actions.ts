@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { checkPermission } from "@/lib/permissions";
 import { z } from "zod";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 
 const empresaSchema = z.object({
   nombre: z.string().min(1, "El nombre es requerido"),

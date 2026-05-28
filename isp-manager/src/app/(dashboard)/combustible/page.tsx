@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getRegistrosCombustible, getResumenMensual } from "@/modules/combustible/actions";
-import { Modulo, TipoCombustible } from "@/generated/prisma/client";
+import { Modulo, TipoCombustible } from "@/generated/prisma/enums";
 import { TIPO_COMBUSTIBLE_LABEL } from "@/lib/labels";
 import { Plus, Fuel, TrendingDown, Droplets } from "lucide-react";
 import { format } from "date-fns";

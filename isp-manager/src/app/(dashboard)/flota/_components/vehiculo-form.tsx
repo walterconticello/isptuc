@@ -7,7 +7,7 @@ import { createVehiculo, updateVehiculo } from "@/modules/flota/actions";
 import { vehiculoSchema } from "@/lib/validations";
 import { TIPO_VEHICULO_LABEL, ESTADO_VEHICULO_LABEL } from "@/lib/labels";
 import { ChevronLeft } from "lucide-react";
-import { TipoVehiculo, EstadoVehiculo } from "@/generated/prisma/client";
+import { TipoVehiculo, EstadoVehiculo } from "@/generated/prisma/enums";
 
 interface VehiculoData {
   id?: string;

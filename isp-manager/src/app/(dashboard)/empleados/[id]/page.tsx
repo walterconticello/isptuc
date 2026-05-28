@@ -3,7 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getEmpleadoById, toggleEmpleadoActivo } from "@/modules/empleados/actions";
-import { Modulo, Rol } from "@/generated/prisma/client";
+import { Modulo, Rol } from "@/generated/prisma/enums";
 import { ROL_LABEL, ROL_COLOR } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, Pencil } from "lucide-react";

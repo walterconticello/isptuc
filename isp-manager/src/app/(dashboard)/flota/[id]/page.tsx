@@ -3,7 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getVehiculoById } from "@/modules/flota/actions";
-import { Modulo, TipoVehiculo, EstadoVehiculo, TipoCombustible } from "@/generated/prisma/client";
+import { Modulo, TipoVehiculo, EstadoVehiculo, TipoCombustible } from "@/generated/prisma/enums";
 import { TIPO_VEHICULO_LABEL, ESTADO_VEHICULO_LABEL, ESTADO_VEHICULO_COLOR, TIPO_COMBUSTIBLE_LABEL } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, Pencil, Fuel, Gauge } from "lucide-react";

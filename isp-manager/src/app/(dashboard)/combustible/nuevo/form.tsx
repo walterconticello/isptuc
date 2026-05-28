@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createRegistroCombustible } from "@/modules/combustible/actions";
 import { combustibleSchema } from "@/lib/validations";
 import { TIPO_COMBUSTIBLE_LABEL } from "@/lib/labels";
-import { TipoCombustible } from "@/generated/prisma/client";
+import { TipoCombustible } from "@/generated/prisma/enums";
 import { ChevronLeft } from "lucide-react";
 import { format } from "date-fns";
 

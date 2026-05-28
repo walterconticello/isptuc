@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getStockDashboard } from "@/modules/stock/actions";
-import { Modulo, TipoMovimiento } from "@/generated/prisma/client";
+import { Modulo, TipoMovimiento } from "@/generated/prisma/enums";
 import { TIPO_MOVIMIENTO_LABEL, TIPO_MOVIMIENTO_COLOR } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { Warehouse, Package, AlertTriangle, Wrench, ArrowRight } from "lucide-react";

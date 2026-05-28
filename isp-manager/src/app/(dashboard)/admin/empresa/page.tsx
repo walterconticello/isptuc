@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getEmpresa } from "@/modules/admin/empresa-actions";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import EmpresaForm from "./form";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";

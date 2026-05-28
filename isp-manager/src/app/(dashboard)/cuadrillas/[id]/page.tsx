@@ -3,7 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getCuadrillaById, toggleEstadoCuadrilla, removerMiembro } from "@/modules/cuadrillas/actions";
-import { Modulo, EstadoCuadrilla, Rol } from "@/generated/prisma/client";
+import { Modulo, EstadoCuadrilla, Rol } from "@/generated/prisma/enums";
 import { ROL_LABEL, ROL_COLOR, ESTADO_CUADRILLA_LABEL, ESTADO_VEHICULO_LABEL, ESTADO_VEHICULO_COLOR } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, UserPlus, Truck } from "lucide-react";

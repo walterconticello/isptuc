@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getItems, toggleItemActivo } from "@/modules/items/actions";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 

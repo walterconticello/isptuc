@@ -3,7 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getPresupuestoById, cambiarEstado } from "@/modules/presupuestos/actions";
-import { Modulo, EstadoPresupuesto } from "@/generated/prisma/client";
+import { Modulo, EstadoPresupuesto } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, Printer } from "lucide-react";
 import { format } from "date-fns";

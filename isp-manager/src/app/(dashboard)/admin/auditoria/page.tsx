@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getAuditLogs } from "@/modules/admin/audit-actions";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
 import { ACCION_LABEL, MODULO_AUDIT_COLOR } from "@/lib/audit";
 import { cn } from "@/lib/utils";

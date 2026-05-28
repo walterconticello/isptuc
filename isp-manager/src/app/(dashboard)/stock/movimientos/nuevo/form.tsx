@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { registrarMovimiento } from "@/modules/stock/actions";
 import { TIPO_MOVIMIENTO_LABEL } from "@/lib/labels";
-import { TipoMovimiento } from "@/generated/prisma/client";
+import { TipoMovimiento } from "@/generated/prisma/enums";
 import { ChevronLeft, Package } from "lucide-react";
 
 interface Producto {

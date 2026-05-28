@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { togglePermiso } from "@/modules/admin/actions";
-import { Modulo, Rol } from "@/generated/prisma/client";
+import { Modulo, Rol } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
 
 interface Props {

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getCuadrillas } from "@/modules/cuadrillas/actions";
-import { Modulo, EstadoCuadrilla } from "@/generated/prisma/client";
+import { Modulo, EstadoCuadrilla } from "@/generated/prisma/enums";
 import { ESTADO_CUADRILLA_LABEL, ROL_LABEL } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { Plus, Users } from "lucide-react";

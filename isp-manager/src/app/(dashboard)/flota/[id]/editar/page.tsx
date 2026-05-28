@@ -2,7 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getVehiculoById } from "@/modules/flota/actions";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import { db } from "@/lib/db";
 import VehiculoForm from "../../_components/vehiculo-form";
 

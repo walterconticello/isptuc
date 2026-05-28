@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createProducto, updateProducto } from "@/modules/stock/actions";
 import { CATEGORIA_LABEL } from "@/lib/labels";
-import { CategoriaProducto } from "@/generated/prisma/client";
+import { CategoriaProducto } from "@/generated/prisma/enums";
 import { ChevronLeft } from "lucide-react";
 
 interface ProductoData {

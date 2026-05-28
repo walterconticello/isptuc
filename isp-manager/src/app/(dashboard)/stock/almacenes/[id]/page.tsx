@@ -3,7 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getAlmacenById } from "@/modules/stock/actions";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import { ChevronLeft, Pencil, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 

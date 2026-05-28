@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getAsignacionesActivas, devolverHerramienta } from "@/modules/stock/actions";
-import { Modulo } from "@/generated/prisma/client";
+import { Modulo } from "@/generated/prisma/enums";
 import { Wrench } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
