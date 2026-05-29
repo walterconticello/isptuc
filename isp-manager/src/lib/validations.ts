@@ -31,7 +31,7 @@ export const loginSchema = z.object({
   password: z.string().min(1, "La contraseña es requerida"),
 });
 
-const tiposVehiculo = ["AUTO", "CAMIONETA", "MOTO", "FURGON"] as const;
+const tiposVehiculo = ["AUTO", "CAMIONETA", "MOTO", "FURGON", "EQUIPO", "OTRO"] as const;
 const estadosVehiculo = ["ACTIVO", "MANTENIMIENTO", "INACTIVO"] as const;
 const tiposCombustible = ["NAFTA", "DIESEL", "GNC", "PREMIUM"] as const;
 

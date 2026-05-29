@@ -34,6 +34,7 @@ export const ROL_LABEL: Record<Rol, string> = {
 
 export const TIPO_VEHICULO_LABEL: Record<TipoVehiculo, string> = {
   AUTO: "Auto", CAMIONETA: "Camioneta", MOTO: "Moto", FURGON: "Furgón",
+  EQUIPO: "Equipo", OTRO: "Otro",
 };
 
 export const ESTADO_VEHICULO_LABEL: Record<EstadoVehiculo, string> = {
