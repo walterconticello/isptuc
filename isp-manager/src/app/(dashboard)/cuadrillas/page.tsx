@@ -4,9 +4,9 @@ import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getCuadrillas } from "@/modules/cuadrillas/actions";
 import { Modulo, EstadoCuadrilla } from "@/generated/prisma/enums";
-import { ESTADO_CUADRILLA_LABEL, ROL_LABEL } from "@/lib/labels";
+import { ESTADO_CUADRILLA_LABEL } from "@/lib/labels";
 import { cn } from "@/lib/utils";
-import { Plus, Users } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export default async function CuadrillasPage() {
   const session = await auth();
@@ -23,7 +23,9 @@ export default async function CuadrillasPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Cuadrillas</h1>
-          <p className="text-sm text-muted-foreground">{cuadrillas.length} cuadrillas</p>
+          <p className="text-sm text-muted-foreground">
+            {cuadrillas.length} {cuadrillas.length === 1 ? "cuadrilla" : "cuadrillas"}
+          </p>
         </div>
         <Link href="/cuadrillas/nueva"
           className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
@@ -33,46 +35,54 @@ export default async function CuadrillasPage() {
         </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {cuadrillas.map((c) => (
-          <Link key={c.id} href={`/cuadrillas/${c.id}`}
-            className="rounded-lg border bg-card p-5 hover:bg-accent/30 transition-colors space-y-3">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="font-semibold">{c.nombre}</p>
-                {c.descripcion && <p className="text-sm text-muted-foreground">{c.descripcion}</p>}
-              </div>
-              <span className={cn(
-                "rounded-full px-2.5 py-0.5 text-xs font-medium",
-                c.estado === EstadoCuadrilla.ACTIVA
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-                  : "bg-gray-100 text-gray-600"
-              )}>
-                {ESTADO_CUADRILLA_LABEL[c.estado as EstadoCuadrilla]}
-              </span>
-            </div>
-
-            {c.miembros.length > 0 && (
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <Users className="h-3.5 w-3.5 text-muted-foreground" />
-                {c.miembros.map((m) => (
-                  <span key={m.id} className="text-xs text-muted-foreground">
-                    {m.empleado.apellido} {m.empleado.nombre}{m.esJefe ? " (jefe)" : ""}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {c.vehiculos.length > 0 && (
-              <p className="text-xs text-muted-foreground">
-                🚗 {c.vehiculos.map((v) => v.patente).join(", ")}
-              </p>
-            )}
-          </Link>
-        ))}
-
+      <div className="rounded-lg border">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b bg-muted/50 text-xs text-muted-foreground">
+              <th className="px-4 py-3 text-left font-medium">Nombre</th>
+              <th className="px-4 py-3 text-left font-medium">Estado</th>
+              <th className="px-4 py-3 text-left font-medium">Miembros</th>
+              <th className="px-4 py-3 text-left font-medium">Vehículos</th>
+              <th className="px-4 py-3 text-right font-medium">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cuadrillas.map((c) => {
+              const jefe = c.miembros.find((m) => m.esJefe);
+              return (
+                <tr key={c.id} className="border-b last:border-0 hover:bg-muted/30">
+                  <td className="px-4 py-3">
+                    <p className="font-medium">{c.nombre}</p>
+                    {c.descripcion && <p className="text-xs text-muted-foreground">{c.descripcion}</p>}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={cn(
+                      "rounded-full px-2.5 py-0.5 text-xs font-medium",
+                      c.estado === EstadoCuadrilla.ACTIVA
+                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+                        : "bg-gray-100 text-gray-600"
+                    )}>
+                      {ESTADO_CUADRILLA_LABEL[c.estado as EstadoCuadrilla]}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {c.miembros.length === 0
+                      ? "—"
+                      : `${c.miembros.length} ${c.miembros.length === 1 ? "miembro" : "miembros"}${jefe ? ` · jefe: ${jefe.empleado.apellido} ${jefe.empleado.nombre}` : ""}`}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {c.vehiculos.length > 0 ? c.vehiculos.map((v) => v.patente).join(", ") : "—"}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Link href={`/cuadrillas/${c.id}`} className="text-primary text-xs hover:underline">Ver</Link>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
         {cuadrillas.length === 0 && (
-          <p className="col-span-2 py-8 text-center text-sm text-muted-foreground">No hay cuadrillas registradas</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">No hay cuadrillas registradas</p>
         )}
       </div>
     </div>

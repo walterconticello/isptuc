@@ -96,17 +96,6 @@ export default async function StockPage() {
         )}
       </div>
 
-      {/* Navegación por secciones */}
-      <div className="grid gap-3 sm:grid-cols-2">
-        <SectionCard href="/stock/productos" title="Catálogo de productos"
-          description="Administrá equipos, herrajes, herramientas y consumibles" />
-        <SectionCard href="/stock/almacenes" title="Almacenes"
-          description="Gestioná ubicaciones y encargados de cada almacén" />
-        <SectionCard href="/stock/movimientos" title="Historial de movimientos"
-          description="Entradas, salidas, ajustes y transferencias" />
-        <SectionCard href="/stock/herramientas" title="Herramientas asignadas"
-          description="Controlá qué empleado tiene cada herramienta" />
-      </div>
     </div>
   );
 }
@@ -125,20 +114,6 @@ function QuickLink({ href, icon, label, value, primary = false }:
         <p className="text-xs text-muted-foreground">{label}</p>
         <p className="font-semibold">{value}</p>
       </div>
-    </Link>
-  );
-}
-
-function SectionCard({ href, title, description }:
-  { href: string; title: string; description: string }) {
-  return (
-    <Link href={href}
-      className="rounded-lg border bg-card p-4 hover:bg-accent/30 transition-colors flex items-start justify-between gap-3">
-      <div>
-        <p className="font-medium text-sm">{title}</p>
-        <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
-      </div>
-      <ArrowRight className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
     </Link>
   );
 }
