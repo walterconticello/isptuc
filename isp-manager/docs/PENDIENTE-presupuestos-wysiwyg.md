@@ -5,6 +5,14 @@
 > Metodología: server actions, patrón `{ success, data } | { success, error }`, Zod en fronteras,
 > `checkPermission` al inicio, errores en español, sin `any`. TDD + commits atómicos.
 
+> **ANTES DE EMPEZAR — instrucciones obligatorias del proyecto:**
+> Leé y cumplí `C:\ISP Tuc\CLAUDE.md` y `C:\ISP Tuc\AGENTS.md` (proyecto agent-skills) y
+> `isp-manager/CLAUDE.md`. Seguí el modelo **skill-driven**: si una tarea coincide con un skill,
+> invocalo y aplicá su workflow completo (no implementes directo). Ciclo: DEFINE → `spec`,
+> PLAN → `plan`, BUILD → `build` (incremental-implementation) + `test` (TDD), REVIEW → `code-review`.
+> Para esta tarea de UI aplica especialmente **`frontend-ui-engineering`** (accesibilidad, responsive,
+> estados vacíos/carga/error, sin "AI aesthetic"). Commits atómicos.
+
 ## Objetivo
 
 Reemplazar el formulario actual de presupuestos por un **editor WYSIWYG**: el documento ES la
