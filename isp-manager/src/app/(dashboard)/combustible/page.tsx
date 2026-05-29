@@ -4,11 +4,10 @@ import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getRegistrosCombustible, getDiasConCargas } from "@/modules/combustible/actions";
 import { db } from "@/lib/db";
-import { Modulo, TipoCombustible } from "@/generated/prisma/enums";
-import { TIPO_COMBUSTIBLE_LABEL } from "@/lib/labels";
-import { fechaCortaUTC } from "@/lib/utils";
+import { Modulo } from "@/generated/prisma/enums";
 import { Plus, Fuel, TrendingDown, Droplets } from "lucide-react";
 import CombustibleFilters from "./filters";
+import TablaRegistros from "./tabla-registros";
 
 export default async function CombustiblePage({
   searchParams,
@@ -90,41 +89,8 @@ export default async function CombustiblePage({
           value={String(cantidadCargas)} />
       </div>
 
-      {/* Lista */}
-      <div className="space-y-2">
-        {registros.map((r) => (
-          <div key={r.id} className="rounded-lg border bg-card p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono font-semibold">{r.vehiculo.patente}</span>
-                  <span className="text-sm text-muted-foreground">{r.vehiculo.marca} {r.vehiculo.modelo}</span>
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs">
-                    {TIPO_COMBUSTIBLE_LABEL[r.tipoCombustible as TipoCombustible]}
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {fechaCortaUTC(new Date(r.fecha))} · {r.empleado.nombre} {r.empleado.apellido}
-                  {r.estacion ? ` · ${r.estacion}` : ""}
-                </p>
-                <p className="text-sm mt-0.5">
-                  {r.litros.toFixed(2)} L · {r.odometro.toLocaleString("es-AR")} km
-                  {r.kmDesdeUltimo ? ` · +${r.kmDesdeUltimo.toFixed(0)} km` : ""}
-                  {r.consumo ? ` · ${r.consumo.toFixed(1)} L/100km` : ""}
-                </p>
-              </div>
-              <p className="font-semibold text-right whitespace-nowrap">
-                ${r.costoTotal.toLocaleString("es-AR", { maximumFractionDigits: 0 })}
-              </p>
-            </div>
-          </div>
-        ))}
-        {registros.length === 0 && (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            {hayFiltros ? "No hay cargas con los filtros seleccionados" : "No hay registros de combustible"}
-          </p>
-        )}
-      </div>
+      {/* Lista — tabla con toggle de unidad de rendimiento */}
+      <TablaRegistros registros={registros} hayFiltros={hayFiltros} />
     </div>
   );
 }
