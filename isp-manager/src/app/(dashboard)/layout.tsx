@@ -68,12 +68,13 @@ export default async function DashboardLayout({
         </div>
       </aside>
 
-      {/* Contenido principal */}
-      <div className="flex flex-1 flex-col">
+      {/* Contenido principal — min-w-0 evita que el contenido ancho (tablas,
+          calendario) desborde el layout flex en pantallas chicas. */}
+      <div className="flex flex-1 flex-col min-w-0">
         {/* Header mobile */}
         <Header session={session} modulosHabilitados={modulosHabilitados} />
 
-        <main className="flex-1 overflow-auto p-4 md:p-6">
+        <main className="min-w-0 flex-1 overflow-auto p-4 md:p-6">
           {children}
         </main>
       </div>
