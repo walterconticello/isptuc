@@ -35,6 +35,45 @@ test.describe("Presupuestos WYSIWYG", () => {
     await expect(totalRow).toContainText("$6.050,00");
   });
 
+  test("crea un cliente nuevo desde el editor sin salir", async ({ page }) => {
+    await page.goto("/presupuestos/nuevo");
+    const nombre = `Cliente E2E ${Date.now()}`;
+
+    // Escribir en el combobox de cliente un nombre inexistente → aparece "+ Crear".
+    await page.getByRole("combobox", { name: "Cliente" }).fill(nombre);
+    await page.getByRole("button", { name: `Crear «${nombre}»` }).click();
+
+    // Se abre el modal con el nombre precargado; completar y crear.
+    const dialog = page.getByRole("dialog", { name: "Nuevo cliente" });
+    await expect(dialog.locator('input[name="nombre"]')).toHaveValue(nombre);
+    await dialog.locator('input[name="cuit"]').fill("20-99999999-9");
+    await dialog.getByRole("button", { name: "Crear cliente" }).click();
+
+    // El cliente queda seleccionado: su ficha (nombre + CUIT) se muestra en el documento.
+    await expect(dialog).toBeHidden();
+    await expect(page.getByText(nombre)).toBeVisible();
+    await expect(page.getByText("CUIT: 20-99999999-9")).toBeVisible();
+  });
+
+  test("crea un ítem nuevo desde una línea y autocompleta el precio", async ({ page }) => {
+    await page.goto("/presupuestos/nuevo");
+    const desc = `Item E2E ${Date.now()}`;
+
+    await page.getByRole("combobox", { name: "Ítem 1" }).fill(desc);
+    await page.getByRole("button", { name: `Crear «${desc}»` }).click();
+
+    const dialog = page.getByRole("dialog", { name: "Nuevo ítem" });
+    await expect(dialog.locator('input[name="descripcion"]')).toHaveValue(desc);
+    await dialog.locator('input[name="precioUnitario"]').fill("1500");
+    await dialog.getByRole("button", { name: "Crear ítem" }).click();
+
+    // La línea toma el ítem: el precio unitario se autocompleta y el subtotal refleja 1×1500.
+    await expect(dialog).toBeHidden();
+    await expect(page.getByLabel("Precio unitario ítem 1")).toHaveValue("1500");
+    const totalRow = page.locator("div").filter({ has: page.getByText("TOTAL", { exact: true }) }).last();
+    await expect(totalRow).toContainText("$1.815,00"); // 1500 × 1.21
+  });
+
   test("achicar la letra de los ítems nunca baja del piso de 11px", async ({ page }) => {
     await page.goto("/presupuestos/nuevo");
     // Cargar muchas líneas para forzar el auto-ajuste hasta el piso.
