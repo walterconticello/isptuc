@@ -8,6 +8,7 @@ import { calcularFontSizeItems } from "@/modules/presupuestos/font-size";
 import { ChevronLeft, Plus, Trash2 } from "lucide-react";
 import Combobox from "./combobox";
 import CrearClienteModal, { type ClienteNuevo } from "./crear-cliente-modal";
+import CrearItemModal, { type ItemNuevo } from "./crear-item-modal";
 import {
   DocumentoShell,
   EmpresaEncabezado,
@@ -55,13 +56,15 @@ function nuevaLinea(): Linea {
   return { id: uid(), descripcion: "", cantidad: 1, precioUnitario: 0 };
 }
 
-export default function PresupuestoEditor({ clientes: clientesIniciales, items, empresa, ivaPorcentajeDefault }: Props) {
+export default function PresupuestoEditor({ clientes: clientesIniciales, items: itemsIniciales, empresa, ivaPorcentajeDefault }: Props) {
   const router = useRouter();
-  // Lista local de clientes: se amplía en vivo al crear uno desde el combobox.
+  // Listas locales: se amplían en vivo al crear cliente/ítem desde el combobox.
   const [clientes, setClientes] = useState<Cliente[]>(clientesIniciales);
+  const [items, setItems] = useState<Item[]>(itemsIniciales);
   const [clienteId, setClienteId] = useState("");
   // query del "+ Crear" pendiente (null = modal cerrado).
   const [crearClienteQuery, setCrearClienteQuery] = useState<string | null>(null);
+  const [crearItem, setCrearItem] = useState<{ lineId: string; query: string } | null>(null);
   const [validezDias, setValidezDias] = useState(15);
   const [ivaPorcentaje, setIvaPorcentaje] = useState(ivaPorcentajeDefault);
   const [notas, setNotas] = useState("");
@@ -76,6 +79,24 @@ export default function PresupuestoEditor({ clientes: clientesIniciales, items, 
     setClientes((prev) => [...prev, nuevo].sort((a, b) => a.nombre.localeCompare(b.nombre)));
     setClienteId(nuevo.id);
     setCrearClienteQuery(null);
+  }
+
+  const opcionesItem = items.map((i) => ({
+    value: i.id,
+    label: i.descripcion,
+    sublabel: `${i.codigo ? `${i.codigo} · ` : ""}${fmtMoneda(Number(i.precioUnitario))}`,
+  }));
+
+  function onItemCreado(lineId: string, nuevo: ItemNuevo) {
+    setItems((prev) => [...prev, nuevo].sort((a, b) => a.descripcion.localeCompare(b.descripcion)));
+    setLineas((prev) =>
+      prev.map((l) =>
+        l.id === lineId
+          ? { ...l, itemServicioId: nuevo.id, descripcion: nuevo.descripcion, precioUnitario: nuevo.precioUnitario }
+          : l,
+      ),
+    );
+    setCrearItem(null);
   }
 
   const subtotal = lineas.reduce((s, l) => s + l.cantidad * l.precioUnitario, 0);
@@ -218,21 +239,28 @@ export default function PresupuestoEditor({ clientes: clientesIniciales, items, 
             {lineas.map((linea, idx) => (
               <div key={linea.id} className="flex items-start gap-2">
                 <div className="flex-1 space-y-1">
-                  <select
-                    aria-label={`Ítem ${idx + 1}`}
+                  <Combobox
+                    ariaLabel={`Ítem ${idx + 1}`}
+                    className="print:hidden"
+                    inputClassName="w-full rounded border border-gray-200 bg-white px-2 py-1 text-gray-900 outline-none focus:ring-1 focus:ring-blue-500"
+                    opciones={opcionesItem}
                     value={linea.itemServicioId ?? ""}
-                    onChange={(e) => updateLinea(linea.id, "itemServicioId", e.target.value)}
-                    className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-gray-900 outline-none focus:ring-1 focus:ring-blue-500 print:hidden"
-                  >
-                    <option value="">— Descripción libre —</option>
-                    {items.map((i) => (
-                      <option key={i.id} value={i.id}>
-                        {i.descripcion}
-                      </option>
-                    ))}
-                  </select>
+                    onSelect={(v) => updateLinea(linea.id, "itemServicioId", v)}
+                    onCrear={(q) => setCrearItem({ lineId: linea.id, query: q })}
+                    placeholder="Buscá, escribí o creá un ítem..."
+                  />
                   {linea.itemServicioId ? (
-                    <p className="text-gray-900">{linea.descripcion}</p>
+                    <>
+                      {/* En pantalla alcanza con el combobox; el <p> es para la impresión. */}
+                      <p className="hidden text-gray-900 print:block">{linea.descripcion}</p>
+                      <button
+                        type="button"
+                        onClick={() => updateLinea(linea.id, "itemServicioId", "")}
+                        className="text-xs text-gray-400 hover:text-gray-600 print:hidden"
+                      >
+                        Usar descripción libre
+                      </button>
+                    </>
                   ) : (
                     <input
                       value={linea.descripcion}
@@ -355,6 +383,14 @@ export default function PresupuestoEditor({ clientes: clientesIniciales, items, 
           nombreInicial={crearClienteQuery}
           onClose={() => setCrearClienteQuery(null)}
           onCreado={onClienteCreado}
+        />
+      )}
+
+      {crearItem && (
+        <CrearItemModal
+          descripcionInicial={crearItem.query}
+          onClose={() => setCrearItem(null)}
+          onCreado={(item) => onItemCreado(crearItem.lineId, item)}
         />
       )}
     </div>
