@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { getPresupuestoById, cambiarEstado } from "@/modules/presupuestos/actions";
+import { codigoPresupuesto } from "@/modules/presupuestos/codigo";
 import { Modulo, EstadoPresupuesto } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
@@ -57,7 +58,7 @@ export default async function PresupuestoDetailPage({ params }: { params: Promis
           <Link href="/presupuestos" className="text-muted-foreground hover:text-foreground" aria-label="Volver a presupuestos">
             <ChevronLeft className="h-5 w-5" />
           </Link>
-          <h1 className="text-lg font-semibold">Presupuesto #{String(p.numero).padStart(4, "0")}</h1>
+          <h1 className="text-lg font-semibold">{codigoPresupuesto(p.numero, new Date(p.fechaEmision))}</h1>
           <span className={cn("rounded-full px-2.5 py-1 text-xs font-medium", ESTADO_COLOR[estado])}>
             {ESTADO_LABEL[estado]}
           </span>

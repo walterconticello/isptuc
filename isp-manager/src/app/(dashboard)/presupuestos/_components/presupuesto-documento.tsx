@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { calcularFontSizeItems } from "@/modules/presupuestos/font-size";
+import { codigoPresupuesto } from "@/modules/presupuestos/codigo";
 
 /**
  * Documento WYSIWYG de presupuesto (estilo factura imprimible).
@@ -88,7 +89,7 @@ export function EmpresaEncabezado({
       <div className="text-right">
         <p className="text-2xl font-bold text-gray-900">PRESUPUESTO</p>
         {numero !== undefined && (
-          <p className="text-sm text-gray-500">N° {String(numero).padStart(4, "0")}</p>
+          <p className="text-sm font-medium text-gray-700">{codigoPresupuesto(numero, fechaEmision)}</p>
         )}
         <p className="mt-2 text-sm text-gray-500">Fecha: {fmtFecha(fechaEmision)}</p>
         <p className="text-sm text-gray-500">Válido hasta: {fmtFecha(fechaVencimiento)}</p>
