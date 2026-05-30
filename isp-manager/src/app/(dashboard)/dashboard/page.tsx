@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import {
   Users, Truck, Fuel, FileText, Package, Wrench,
-  AlertTriangle, TrendingUp, TrendingDown, Minus,
+  AlertTriangle, TrendingUp, TrendingDown,
   Activity,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";

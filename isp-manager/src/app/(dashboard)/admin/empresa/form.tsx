@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { updateEmpresa } from "@/modules/admin/empresa-actions";
-import { Building2, Check } from "lucide-react";
+import { Check } from "lucide-react";
 
 interface EmpresaData {
   nombre?: string;
@@ -31,6 +31,9 @@ export default function EmpresaForm({ empresa }: { empresa?: EmpresaData | null 
       {/* Logo preview */}
       {empresa?.logoUrl && (
         <div className="flex items-center gap-3 pb-2 border-b">
+          {/* logoUrl es una URL pública arbitraria del usuario: next/image exigiría whitelistear
+              dominios en next.config y rompería con hosts no listados. Mantenemos <img>. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={empresa.logoUrl} alt="Logo empresa" className="h-12 w-auto object-contain rounded" />
           <span className="text-sm text-muted-foreground">Logo actual</span>
         </div>
