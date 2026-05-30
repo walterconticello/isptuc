@@ -3,8 +3,9 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createPresupuesto } from "@/modules/presupuestos/actions";
+import { createPresupuesto, updatePresupuesto } from "@/modules/presupuestos/actions";
 import { calcularFontSizeItems } from "@/modules/presupuestos/font-size";
+import { codigoPresupuesto } from "@/modules/presupuestos/codigo";
 import { ChevronLeft, Plus, Trash2 } from "lucide-react";
 import Combobox from "./combobox";
 import CrearClienteModal, { type ClienteNuevo } from "./crear-cliente-modal";
@@ -40,11 +41,24 @@ interface Linea {
   precioUnitario: number;
 }
 
+interface PresupuestoInicial {
+  id: string;
+  numero: number;
+  fechaEmision: string | Date;
+  clienteId: string;
+  validezDias: number;
+  ivaPorcentaje: number;
+  notas: string;
+  lineas: { itemServicioId?: string; descripcion: string; cantidad: number; precioUnitario: number }[];
+}
+
 interface Props {
   clientes: Cliente[];
   items: Item[];
   empresa: EmpresaDoc | null;
   ivaPorcentajeDefault: number;
+  /** Si viene, el editor entra en modo edición sobre un presupuesto existente. */
+  presupuesto?: PresupuestoInicial;
 }
 
 let nextId = 1;
@@ -56,19 +70,22 @@ function nuevaLinea(): Linea {
   return { id: uid(), descripcion: "", cantidad: 1, precioUnitario: 0 };
 }
 
-export default function PresupuestoEditor({ clientes: clientesIniciales, items: itemsIniciales, empresa, ivaPorcentajeDefault }: Props) {
+export default function PresupuestoEditor({ clientes: clientesIniciales, items: itemsIniciales, empresa, ivaPorcentajeDefault, presupuesto }: Props) {
   const router = useRouter();
+  const esEdicion = !!presupuesto;
   // Listas locales: se amplían en vivo al crear cliente/ítem desde el combobox.
   const [clientes, setClientes] = useState<Cliente[]>(clientesIniciales);
   const [items, setItems] = useState<Item[]>(itemsIniciales);
-  const [clienteId, setClienteId] = useState("");
+  const [clienteId, setClienteId] = useState(presupuesto?.clienteId ?? "");
   // query del "+ Crear" pendiente (null = modal cerrado).
   const [crearClienteQuery, setCrearClienteQuery] = useState<string | null>(null);
   const [crearItem, setCrearItem] = useState<{ lineId: string; query: string } | null>(null);
-  const [validezDias, setValidezDias] = useState(15);
-  const [ivaPorcentaje, setIvaPorcentaje] = useState(ivaPorcentajeDefault);
-  const [notas, setNotas] = useState("");
-  const [lineas, setLineas] = useState<Linea[]>([nuevaLinea()]);
+  const [validezDias, setValidezDias] = useState(presupuesto?.validezDias ?? 15);
+  const [ivaPorcentaje, setIvaPorcentaje] = useState(presupuesto?.ivaPorcentaje ?? ivaPorcentajeDefault);
+  const [notas, setNotas] = useState(presupuesto?.notas ?? "");
+  const [lineas, setLineas] = useState<Linea[]>(
+    presupuesto?.lineas.length ? presupuesto.lineas.map((l) => ({ id: uid(), ...l })) : [nuevaLinea()],
+  );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -104,13 +121,16 @@ export default function PresupuestoEditor({ clientes: clientesIniciales, items: 
   const total = subtotal + ivaImporte;
   const itemFontPx = calcularFontSizeItems(lineas.length);
 
-  // Fecha de emisión estable durante la edición; vencimiento derivado de la validez.
-  const hoy = useMemo(() => new Date(), []);
+  // Fecha de emisión: la original al editar, hoy al crear. El vencimiento deriva de la validez.
+  const fechaEmision = useMemo(
+    () => (presupuesto ? new Date(presupuesto.fechaEmision) : new Date()),
+    [presupuesto],
+  );
   const vencimiento = useMemo(() => {
-    const d = new Date(hoy);
+    const d = new Date(fechaEmision);
     d.setDate(d.getDate() + validezDias);
     return d;
-  }, [hoy, validezDias]);
+  }, [fechaEmision, validezDias]);
 
   function addLinea() {
     setLineas((prev) => [...prev, nuevaLinea()]);
@@ -162,7 +182,9 @@ export default function PresupuestoEditor({ clientes: clientesIniciales, items: 
       })),
     };
 
-    const result = await createPresupuesto(data);
+    const result = presupuesto
+      ? await updatePresupuesto(presupuesto.id, data)
+      : await createPresupuesto(data);
     if (!result.success) {
       setError(result.error);
       setLoading(false);
@@ -179,7 +201,9 @@ export default function PresupuestoEditor({ clientes: clientesIniciales, items: 
           <Link href="/presupuestos" className="text-muted-foreground hover:text-foreground" aria-label="Volver a presupuestos">
             <ChevronLeft className="h-5 w-5" />
           </Link>
-          <h1 className="text-lg font-semibold">Nuevo presupuesto</h1>
+          <h1 className="text-lg font-semibold">
+            {esEdicion ? `Editar ${codigoPresupuesto(presupuesto!.numero, fechaEmision)}` : "Nuevo presupuesto"}
+          </h1>
         </div>
         <div className="flex items-center gap-2">
           {error && <span className="text-sm text-destructive">{error}</span>}
@@ -189,14 +213,14 @@ export default function PresupuestoEditor({ clientes: clientesIniciales, items: 
             disabled={loading}
             className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           >
-            {loading ? "Guardando..." : "Guardar presupuesto"}
+            {loading ? "Guardando..." : esEdicion ? "Guardar cambios" : "Guardar presupuesto"}
           </button>
         </div>
       </div>
 
       {/* Documento WYSIWYG editable */}
       <DocumentoShell>
-        <EmpresaEncabezado empresa={empresa} fechaEmision={hoy} fechaVencimiento={vencimiento} />
+        <EmpresaEncabezado empresa={empresa} numero={presupuesto?.numero} fechaEmision={fechaEmision} fechaVencimiento={vencimiento} />
 
         <hr className="mb-6 border-gray-200" />
 

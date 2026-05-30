@@ -7,7 +7,7 @@ import { getPresupuestoById, cambiarEstado } from "@/modules/presupuestos/action
 import { codigoPresupuesto } from "@/modules/presupuestos/codigo";
 import { Modulo, EstadoPresupuesto } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Pencil } from "lucide-react";
 import { PrintButton } from "../_components/print-button";
 import { PresupuestoDocumento } from "../_components/presupuesto-documento";
 
@@ -64,6 +64,14 @@ export default async function PresupuestoDetailPage({ params }: { params: Promis
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {estado === "BORRADOR" && (
+            <Link
+              href={`/presupuestos/${id}/editar`}
+              className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium hover:bg-accent"
+            >
+              <Pencil className="h-4 w-4" /> Editar
+            </Link>
+          )}
           {siguientesEstados.map((siguiente) => (
             <form key={siguiente} action={async () => { "use server"; await cambiarEstado(id, siguiente); }}>
               <button type="submit" className={cn(

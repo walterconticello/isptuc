@@ -74,6 +74,38 @@ test.describe("Presupuestos WYSIWYG", () => {
     await expect(totalRow).toContainText("$1.815,00"); // 1500 × 1.21
   });
 
+  test("edita un presupuesto en borrador y actualiza el total", async ({ page }) => {
+    // 1) Crear un presupuesto borrador con un cliente nuevo y una línea.
+    await page.goto("/presupuestos/nuevo");
+    const cliente = `Cliente Edit ${Date.now()}`;
+    await page.getByRole("combobox", { name: "Cliente" }).fill(cliente);
+    await page.getByRole("button", { name: `Crear «${cliente}»` }).click();
+    const dlg = page.getByRole("dialog", { name: "Nuevo cliente" });
+    await dlg.getByRole("button", { name: "Crear cliente" }).click();
+    await expect(dlg).toBeHidden();
+
+    await page.getByPlaceholder("Descripción del ítem").first().fill("Servicio de prueba");
+    await page.getByLabel("Cantidad ítem 1").fill("1");
+    await page.getByLabel("Precio unitario ítem 1").fill("1000");
+    await page.getByRole("button", { name: "Guardar presupuesto" }).click();
+
+    // 2) Detalle: el código PRES-AAAA-NNNN se ve y, por ser borrador, se puede editar.
+    await expect(page).toHaveURL(/\/presupuestos\/[a-z0-9]+$/);
+    await expect(page.getByRole("heading", { name: /PRES-\d{4}-\d+/ })).toBeVisible();
+    await page.getByRole("link", { name: "Editar" }).click();
+
+    // 3) Editor en modo edición: viene precargado; cambiar el precio.
+    await expect(page).toHaveURL(/\/editar$/);
+    await expect(page.getByPlaceholder("Descripción del ítem").first()).toHaveValue("Servicio de prueba");
+    await page.getByLabel("Precio unitario ítem 1").fill("2000");
+    await page.getByRole("button", { name: "Guardar cambios" }).click();
+
+    // 4) Vuelta al detalle con el total recalculado (2000 × 1.21 = 2420).
+    await expect(page).toHaveURL(/\/presupuestos\/[a-z0-9]+$/);
+    const totalRow = page.locator("div").filter({ has: page.getByText("TOTAL", { exact: true }) }).last();
+    await expect(totalRow).toContainText("$2.420,00");
+  });
+
   test("achicar la letra de los ítems nunca baja del piso de 11px", async ({ page }) => {
     await page.goto("/presupuestos/nuevo");
     // Cargar muchas líneas para forzar el auto-ajuste hasta el piso.
