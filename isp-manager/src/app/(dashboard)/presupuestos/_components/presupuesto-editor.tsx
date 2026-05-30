@@ -6,6 +6,8 @@ import Link from "next/link";
 import { createPresupuesto } from "@/modules/presupuestos/actions";
 import { calcularFontSizeItems } from "@/modules/presupuestos/font-size";
 import { ChevronLeft, Plus, Trash2 } from "lucide-react";
+import Combobox from "./combobox";
+import CrearClienteModal, { type ClienteNuevo } from "./crear-cliente-modal";
 import {
   DocumentoShell,
   EmpresaEncabezado,
@@ -53,9 +55,13 @@ function nuevaLinea(): Linea {
   return { id: uid(), descripcion: "", cantidad: 1, precioUnitario: 0 };
 }
 
-export default function PresupuestoEditor({ clientes, items, empresa, ivaPorcentajeDefault }: Props) {
+export default function PresupuestoEditor({ clientes: clientesIniciales, items, empresa, ivaPorcentajeDefault }: Props) {
   const router = useRouter();
+  // Lista local de clientes: se amplía en vivo al crear uno desde el combobox.
+  const [clientes, setClientes] = useState<Cliente[]>(clientesIniciales);
   const [clienteId, setClienteId] = useState("");
+  // query del "+ Crear" pendiente (null = modal cerrado).
+  const [crearClienteQuery, setCrearClienteQuery] = useState<string | null>(null);
   const [validezDias, setValidezDias] = useState(15);
   const [ivaPorcentaje, setIvaPorcentaje] = useState(ivaPorcentajeDefault);
   const [notas, setNotas] = useState("");
@@ -64,6 +70,13 @@ export default function PresupuestoEditor({ clientes, items, empresa, ivaPorcent
   const [loading, setLoading] = useState(false);
 
   const cliente = clientes.find((c) => c.id === clienteId) ?? null;
+  const opcionesCliente = clientes.map((c) => ({ value: c.id, label: c.nombre, sublabel: c.cuit ?? undefined }));
+
+  function onClienteCreado(nuevo: ClienteNuevo) {
+    setClientes((prev) => [...prev, nuevo].sort((a, b) => a.nombre.localeCompare(b.nombre)));
+    setClienteId(nuevo.id);
+    setCrearClienteQuery(null);
+  }
 
   const subtotal = lineas.reduce((s, l) => s + l.cantidad * l.precioUnitario, 0);
   const ivaImporte = subtotal * (ivaPorcentaje / 100);
@@ -168,22 +181,18 @@ export default function PresupuestoEditor({ clientes, items, empresa, ivaPorcent
 
         {/* Cliente */}
         <div className="mb-6">
-          <label htmlFor="cliente" className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500">
             Cliente
-          </label>
-          <select
-            id="cliente"
+          </span>
+          <Combobox
+            ariaLabel="Cliente"
+            className="max-w-sm print:hidden"
+            opciones={opcionesCliente}
             value={clienteId}
-            onChange={(e) => setClienteId(e.target.value)}
-            className="w-full max-w-sm rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:ring-2 focus:ring-blue-500 print:hidden"
-          >
-            <option value="">Seleccioná un cliente</option>
-            {clientes.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nombre}
-              </option>
-            ))}
-          </select>
+            onSelect={setClienteId}
+            onCrear={(q) => setCrearClienteQuery(q)}
+            placeholder="Buscá o creá un cliente..."
+          />
           {cliente && (
             <div className="mt-2 print:mt-0">
               <p className="font-medium text-gray-900">{cliente.nombre}</p>
@@ -340,6 +349,14 @@ export default function PresupuestoEditor({ clientes, items, empresa, ivaPorcent
           {notas && <p className="hidden whitespace-pre-line text-sm text-gray-600 print:block">{notas}</p>}
         </div>
       </DocumentoShell>
+
+      {crearClienteQuery !== null && (
+        <CrearClienteModal
+          nombreInicial={crearClienteQuery}
+          onClose={() => setCrearClienteQuery(null)}
+          onCreado={onClienteCreado}
+        />
+      )}
     </div>
   );
 }
