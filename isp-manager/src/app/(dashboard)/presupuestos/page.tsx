@@ -6,7 +6,7 @@ import { getPresupuestos } from "@/modules/presupuestos/actions";
 import { codigoPresupuesto } from "@/modules/presupuestos/codigo";
 import { Modulo, EstadoPresupuesto } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
-import { Plus, FileText } from "lucide-react";
+import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 

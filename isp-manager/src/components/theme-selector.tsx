@@ -56,6 +56,9 @@ export function ThemeSelector() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Guard de hidratación SSR: sincroniza el acento/tema persistidos en localStorage
+    // (sistema externo) al montar. El setState acá es intencional y evita el mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const key = localStorage.getItem(STORAGE_KEY) ?? "blue";
     const hue = Number(localStorage.getItem(STORAGE_HUE));

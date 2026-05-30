@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
@@ -51,7 +52,7 @@ export default async function HerramientasPage() {
       <div className="rounded-lg border bg-card p-5 space-y-3">
         <h2 className="font-medium text-sm">Asignar herramienta</h2>
         {herramientas.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No hay herramientas en el catálogo. <a href="/stock/productos/nuevo" className="text-primary hover:underline">Crear producto</a></p>
+          <p className="text-sm text-muted-foreground">No hay herramientas en el catálogo. <Link href="/stock/productos/nuevo" className="text-primary hover:underline">Crear producto</Link></p>
         ) : (
           <AsignarHerramientaForm herramientas={herramientas} empleados={empleados} />
         )}

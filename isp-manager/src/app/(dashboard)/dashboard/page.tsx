@@ -21,21 +21,6 @@ const MODULE_COLORS = {
   herramientas: { bar: "bg-indigo-500", icon: "bg-indigo-50 text-indigo-500",border: "before:bg-indigo-500" },
 } as const;
 
-/* ── Sparkline (7 barras simuladas) ────────────────────── */
-function Sparkline({ heights, colorClass }: { heights: number[]; colorClass: string }) {
-  return (
-    <div className="flex items-end gap-0.5 h-6 mt-3">
-      {heights.map((h, i) => (
-        <div
-          key={i}
-          className={cn("flex-1 rounded-sm", colorClass, i < heights.length - 1 ? "opacity-20" : "opacity-85")}
-          style={{ height: `${h}%` }}
-        />
-      ))}
-    </div>
-  );
-}
-
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
