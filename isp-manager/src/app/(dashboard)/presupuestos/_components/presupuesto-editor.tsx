@@ -9,6 +9,7 @@ import { ChevronLeft, Plus, Trash2 } from "lucide-react";
 import Combobox from "./combobox";
 import CrearClienteModal, { type ClienteNuevo } from "./crear-cliente-modal";
 import CrearItemModal, { type ItemNuevo } from "./crear-item-modal";
+import { PrintButton } from "./print-button";
 import {
   DocumentoShell,
   EmpresaEncabezado,
@@ -183,6 +184,7 @@ export default function PresupuestoEditor({ clientes: clientesIniciales, items: 
         </div>
         <div className="flex items-center gap-2">
           {error && <span className="text-sm text-destructive">{error}</span>}
+          <PrintButton />
           <button
             type="button"
             onClick={handleSave}

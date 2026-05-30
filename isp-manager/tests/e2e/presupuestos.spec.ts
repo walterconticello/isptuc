@@ -74,6 +74,22 @@ test.describe("Presupuestos WYSIWYG", () => {
     await expect(totalRow).toContainText("$1.815,00"); // 1500 × 1.21
   });
 
+  test("el editor ofrece Imprimir/PDF y oculta el sidebar al imprimir", async ({ page }) => {
+    await page.goto("/presupuestos/nuevo");
+
+    // El botón está disponible desde el editor (antes de guardar).
+    await expect(page.getByRole("button", { name: "Imprimir / PDF" })).toBeVisible();
+
+    // En pantalla el sidebar se ve; al imprimir queda oculto (no ensucia el PDF).
+    const sidebar = page.getByRole("complementary");
+    await expect(sidebar).toBeVisible();
+    await page.emulateMedia({ media: "print" });
+    await expect(sidebar).toBeHidden();
+    // El documento del presupuesto sí se imprime.
+    await expect(page.getByText("PRESUPUESTO", { exact: true })).toBeVisible();
+    await page.emulateMedia({ media: "screen" });
+  });
+
   test("achicar la letra de los ítems nunca baja del piso de 11px", async ({ page }) => {
     await page.goto("/presupuestos/nuevo");
     // Cargar muchas líneas para forzar el auto-ajuste hasta el piso.

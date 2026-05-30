@@ -148,3 +148,18 @@
     text-wrap: pretty;
   }
 }
+
+/* Impresión / "Guardar como PDF": hoja A4 con márgenes y colores fieles.
+   El chrome del dashboard se oculta con variantes print: en el layout, y el
+   documento del presupuesto ya trae sus propias clases print:. */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: #fff;
+  }
+}

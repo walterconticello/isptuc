@@ -30,7 +30,7 @@ export default async function DashboardLayout({
   return (
     <div className="flex min-h-screen">
       {/* Sidebar desktop (oculto en mobile) */}
-      <aside className="hidden md:flex md:w-60 md:flex-col md:border-r md:bg-sidebar">
+      <aside className="hidden md:flex md:w-60 md:flex-col md:border-r md:bg-sidebar print:hidden">
         {/* Logo */}
         <div className="flex h-14 items-center gap-2 border-b px-4">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
@@ -72,9 +72,11 @@ export default async function DashboardLayout({
           calendario) desborde el layout flex en pantallas chicas. */}
       <div className="flex flex-1 flex-col min-w-0">
         {/* Header mobile */}
-        <Header session={session} modulosHabilitados={modulosHabilitados} />
+        <div className="print:hidden">
+          <Header session={session} modulosHabilitados={modulosHabilitados} />
+        </div>
 
-        <main className="min-w-0 flex-1 overflow-auto p-4 md:p-6">
+        <main className="min-w-0 flex-1 overflow-auto p-4 md:p-6 print:overflow-visible print:p-0">
           {children}
         </main>
       </div>
