@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
-import { checkPermission } from "@/lib/permissions";
+import { checkPermission, puedeGestionarRol, getRolEmpleado } from "@/lib/permissions";
 import { crearEmpleadoSchema, editarEmpleadoSchema } from "@/lib/validations";
 import { Modulo } from "@/generated/prisma/enums";
 import bcrypt from "bcryptjs";
@@ -71,6 +71,12 @@ export async function createEmpleado(rawData: unknown): Promise<ActionResult<{ i
   const parsed = crearEmpleadoSchema.safeParse(rawData);
   if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
 
+  // No se puede crear un empleado con un rol igual o superior al propio.
+  const actorRol = await getRolEmpleado(session.user.id);
+  if (!actorRol || !puedeGestionarRol(actorRol, parsed.data.rol)) {
+    return { success: false, error: "No podés asignar un rol igual o superior al tuyo" };
+  }
+
   const existing = await db.empleado.findUnique({ where: { email: parsed.data.email } });
   if (existing) return { success: false, error: "Ya existe un empleado con ese email" };
 
@@ -103,11 +109,25 @@ export async function updateEmpleado(id: string, rawData: unknown): Promise<Acti
   const parsed = editarEmpleadoSchema.safeParse(rawData);
   if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
 
-  // No se puede cambiar el propio rol
+  const actorRol = await getRolEmpleado(session.user.id);
+  if (!actorRol) return { success: false, error: "No autenticado" };
+
+  const objetivo = await db.empleado.findUnique({ where: { id }, select: { rol: true } });
+  if (!objetivo) return { success: false, error: "Empleado no encontrado" };
+
   if (id === session.user.id) {
-    const actual = await db.empleado.findUnique({ where: { id }, select: { rol: true } });
-    if (actual && actual.rol !== parsed.data.rol) {
+    // No se puede cambiar el propio rol (pero sí editar el resto del propio perfil).
+    if (objetivo.rol !== parsed.data.rol) {
       return { success: false, error: "No podés cambiar tu propio rol" };
+    }
+  } else {
+    // No se puede editar a alguien de rol igual o superior al propio...
+    if (!puedeGestionarRol(actorRol, objetivo.rol)) {
+      return { success: false, error: "No podés editar a un empleado de rol igual o superior al tuyo" };
+    }
+    // ...ni asignarle un rol igual o superior al propio.
+    if (!puedeGestionarRol(actorRol, parsed.data.rol)) {
+      return { success: false, error: "No podés asignar un rol igual o superior al tuyo" };
     }
   }
 
