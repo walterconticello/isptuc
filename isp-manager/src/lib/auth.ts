@@ -4,6 +4,13 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { loginSchema } from "@/lib/validations";
 import { logAudit } from "@/lib/audit";
+import { assertSecretValido } from "@/lib/auth-secret";
+
+// Falla el arranque en producción si el secreto de sesión es débil o ausente.
+assertSecretValido(
+  process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+  process.env.NODE_ENV ?? "development"
+);
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
