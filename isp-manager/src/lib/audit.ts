@@ -51,8 +51,10 @@ export async function logAudit(params: LogParams): Promise<void> {
         detalles: params.detalles ? (params.detalles as import("@/generated/prisma/client").Prisma.InputJsonValue) : undefined,
       },
     });
-  } catch {
-    // El log de auditoría nunca debe romper la operación principal
+  } catch (err) {
+    // El log de auditoría nunca debe romper la operación principal, pero su
+    // fallo tampoco debe quedar invisible.
+    console.error("[audit] no se pudo registrar la acción", err);
   }
 }
 
