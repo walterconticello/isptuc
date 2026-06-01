@@ -1,6 +1,7 @@
 import { PrismaClient, Rol, Modulo } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
+import { getCredencialesAdminSeed } from "./seed-helpers";
 
 const adapter = new PrismaPg(
   process.env.DATABASE_URL ??
@@ -59,13 +60,14 @@ async function main() {
   }
   console.log(`✅ Permisos: ${permisosCreados} registros`);
 
-  // Usuario administrador (DUENO)
-  const passwordHash = await bcrypt.hash("admin123", 12);
+  // Usuario administrador (DUENO) — credenciales desde el entorno, sin hardcodear.
+  const { email: adminEmail, password: adminPassword } = getCredencialesAdminSeed();
+  const passwordHash = await bcrypt.hash(adminPassword, 12);
   const admin = await db.empleado.upsert({
-    where: { email: "admin@isp.local" },
+    where: { email: adminEmail },
     update: {},
     create: {
-      email: "admin@isp.local",
+      email: adminEmail,
       passwordHash,
       nombre: "Admin",
       apellido: "Sistema",
