@@ -7,6 +7,7 @@ import { checkPermission } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { z } from "zod";
 import { Modulo, EstadoPresupuesto } from "@/generated/prisma/enums";
+import { transicionValida } from "./estados";
 
 type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string };
 
@@ -174,11 +175,21 @@ export async function updatePresupuesto(id: string, rawData: unknown): Promise<A
   return { success: true, data: { id } };
 }
 
-export async function cambiarEstado(id: string, estado: EstadoPresupuesto): Promise<ActionResult> {
+export async function cambiarEstado(id: string, estadoRaw: unknown): Promise<ActionResult> {
   const { session, error } = await guardPresupuestos();
   if (!session) return { success: false, error: error! };
 
+  const parsed = z.nativeEnum(EstadoPresupuesto).safeParse(estadoRaw);
+  if (!parsed.success) return { success: false, error: "Estado inválido" };
+  const estado = parsed.data;
+
   const anterior = await db.presupuesto.findUnique({ where: { id }, select: { estado: true, numero: true } });
+  if (!anterior) return { success: false, error: "Presupuesto no encontrado" };
+
+  if (!transicionValida(anterior.estado, estado)) {
+    return { success: false, error: `No se puede pasar de ${anterior.estado} a ${estado}` };
+  }
+
   await db.presupuesto.update({ where: { id }, data: { estado } });
   void logAudit({ empleadoId: session.user.id, accion: "CAMBIAR_ESTADO_PRESUPUESTO", modulo: "PRESUPUESTOS", entidadId: id, entidadNombre: anterior ? `#${anterior.numero}` : id, detalles: { estadoAnterior: anterior?.estado, estadoNuevo: estado } });
   revalidatePath("/presupuestos");
