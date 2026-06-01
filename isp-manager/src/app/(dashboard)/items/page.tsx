@@ -21,8 +21,10 @@ export default async function ItemsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Items / Servicios</h1>
-          <p className="text-sm text-muted-foreground">{items.length} items activos</p>
+          <h1 className="text-2xl font-semibold">Items facturables</h1>
+          <p className="text-sm text-muted-foreground">
+            Catálogo de ítems y servicios para presupuestos · {items.length} {items.length === 1 ? "item activo" : "items activos"}
+          </p>
         </div>
         <Link href="/items/nuevo"
           className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">

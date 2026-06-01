@@ -1,45 +1,143 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createPresupuesto } from "@/modules/presupuestos/actions";
-import { Plus, Trash2, ChevronLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { createPresupuesto, updatePresupuesto } from "@/modules/presupuestos/actions";
+import { calcularFontSizeItems } from "@/modules/presupuestos/font-size";
+import { codigoPresupuesto } from "@/modules/presupuestos/codigo";
+import { ChevronLeft, Plus, Trash2 } from "lucide-react";
+import Combobox from "./combobox";
+import CrearClienteModal, { type ClienteNuevo } from "./crear-cliente-modal";
+import CrearItemModal, { type ItemNuevo } from "./crear-item-modal";
+import {
+  DocumentoShell,
+  EmpresaEncabezado,
+  fmtFecha,
+  fmtMoneda,
+  type EmpresaDoc,
+} from "./presupuesto-documento";
 
-interface Cliente { id: string; nombre: string; cuit?: string | null; email?: string | null; telefono?: string | null; direccion?: string | null; }
-interface Item { id: string; descripcion: string; precioUnitario: number | string; unidad: string; codigo?: string | null; }
-interface Linea { id: string; itemServicioId?: string; descripcion: string; cantidad: number; precioUnitario: number; }
+interface Cliente {
+  id: string;
+  nombre: string;
+  cuit?: string | null;
+  email?: string | null;
+  telefono?: string | null;
+  direccion?: string | null;
+}
+interface Item {
+  id: string;
+  descripcion: string;
+  precioUnitario: number | string;
+  unidad: string;
+  codigo?: string | null;
+}
+interface Linea {
+  id: string;
+  itemServicioId?: string;
+  descripcion: string;
+  cantidad: number;
+  precioUnitario: number;
+}
+
+interface PresupuestoInicial {
+  id: string;
+  numero: number;
+  fechaEmision: string | Date;
+  clienteId: string;
+  validezDias: number;
+  ivaPorcentaje: number;
+  notas: string;
+  lineas: { itemServicioId?: string; descripcion: string; cantidad: number; precioUnitario: number }[];
+}
 
 interface Props {
   clientes: Cliente[];
   items: Item[];
+  empresa: EmpresaDoc | null;
   ivaPorcentajeDefault: number;
+  /** Si viene, el editor entra en modo edición sobre un presupuesto existente. */
+  presupuesto?: PresupuestoInicial;
 }
 
 let nextId = 1;
-function uid() { return String(nextId++); }
+function uid() {
+  return String(nextId++);
+}
 
-export default function PresupuestoEditor({ clientes, items, ivaPorcentajeDefault }: Props) {
+function nuevaLinea(): Linea {
+  return { id: uid(), descripcion: "", cantidad: 1, precioUnitario: 0 };
+}
+
+export default function PresupuestoEditor({ clientes: clientesIniciales, items: itemsIniciales, empresa, ivaPorcentajeDefault, presupuesto }: Props) {
   const router = useRouter();
-  const [clienteId, setClienteId] = useState("");
-  const [validezDias, setValidezDias] = useState(15);
-  const [ivaPorcentaje, setIvaPorcentaje] = useState(ivaPorcentajeDefault);
-  const [notas, setNotas] = useState("");
-  const [lineas, setLineas] = useState<Linea[]>([{ id: uid(), descripcion: "", cantidad: 1, precioUnitario: 0 }]);
+  const esEdicion = !!presupuesto;
+  // Listas locales: se amplían en vivo al crear cliente/ítem desde el combobox.
+  const [clientes, setClientes] = useState<Cliente[]>(clientesIniciales);
+  const [items, setItems] = useState<Item[]>(itemsIniciales);
+  const [clienteId, setClienteId] = useState(presupuesto?.clienteId ?? "");
+  // query del "+ Crear" pendiente (null = modal cerrado).
+  const [crearClienteQuery, setCrearClienteQuery] = useState<string | null>(null);
+  const [crearItem, setCrearItem] = useState<{ lineId: string; query: string } | null>(null);
+  const [validezDias, setValidezDias] = useState(presupuesto?.validezDias ?? 15);
+  const [ivaPorcentaje, setIvaPorcentaje] = useState(presupuesto?.ivaPorcentaje ?? ivaPorcentajeDefault);
+  const [notas, setNotas] = useState(presupuesto?.notas ?? "");
+  const [lineas, setLineas] = useState<Linea[]>(
+    presupuesto?.lineas.length ? presupuesto.lineas.map((l) => ({ id: uid(), ...l })) : [nuevaLinea()],
+  );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const cliente = clientes.find((c) => c.id === clienteId) ?? null;
+  const opcionesCliente = clientes.map((c) => ({ value: c.id, label: c.nombre, sublabel: c.cuit ?? undefined }));
+
+  function onClienteCreado(nuevo: ClienteNuevo) {
+    setClientes((prev) => [...prev, nuevo].sort((a, b) => a.nombre.localeCompare(b.nombre)));
+    setClienteId(nuevo.id);
+    setCrearClienteQuery(null);
+  }
+
+  const opcionesItem = items.map((i) => ({
+    value: i.id,
+    label: i.descripcion,
+    sublabel: `${i.codigo ? `${i.codigo} · ` : ""}${fmtMoneda(Number(i.precioUnitario))}`,
+  }));
+
+  function onItemCreado(lineId: string, nuevo: ItemNuevo) {
+    setItems((prev) => [...prev, nuevo].sort((a, b) => a.descripcion.localeCompare(b.descripcion)));
+    setLineas((prev) =>
+      prev.map((l) =>
+        l.id === lineId
+          ? { ...l, itemServicioId: nuevo.id, descripcion: nuevo.descripcion, precioUnitario: nuevo.precioUnitario }
+          : l,
+      ),
+    );
+    setCrearItem(null);
+  }
 
   const subtotal = lineas.reduce((s, l) => s + l.cantidad * l.precioUnitario, 0);
   const ivaImporte = subtotal * (ivaPorcentaje / 100);
   const total = subtotal + ivaImporte;
+  const itemFontPx = calcularFontSizeItems(lineas.length);
+
+  // Fecha de emisión: la original al editar, hoy al crear. El vencimiento deriva de la validez.
+  const fechaEmision = useMemo(
+    () => (presupuesto ? new Date(presupuesto.fechaEmision) : new Date()),
+    [presupuesto],
+  );
+  const vencimiento = useMemo(() => {
+    const d = new Date(fechaEmision);
+    d.setDate(d.getDate() + validezDias);
+    return d;
+  }, [fechaEmision, validezDias]);
 
   function addLinea() {
-    setLineas((prev) => [...prev, { id: uid(), descripcion: "", cantidad: 1, precioUnitario: 0 }]);
+    setLineas((prev) => [...prev, nuevaLinea()]);
   }
 
   function removeLinea(id: string) {
-    setLineas((prev) => prev.filter((l) => l.id !== id));
+    setLineas((prev) => (prev.length > 1 ? prev.filter((l) => l.id !== id) : prev));
   }
 
   function updateLinea(id: string, field: keyof Omit<Linea, "id">, value: string | number) {
@@ -53,15 +151,21 @@ export default function PresupuestoEditor({ clientes, items, ivaPorcentajeDefaul
             : { ...l, itemServicioId: undefined, descripcion: "", precioUnitario: 0 };
         }
         return { ...l, [field]: value };
-      })
+      }),
     );
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSave() {
     setError(null);
-    if (!clienteId) { setError("Seleccioná un cliente"); return; }
-    if (lineas.some((l) => !l.descripcion)) { setError("Completá la descripción de todos los ítems"); return; }
+    if (!clienteId) {
+      setError("Seleccioná un cliente");
+      return;
+    }
+    const lineasValidas = lineas.filter((l) => l.descripcion.trim());
+    if (!lineasValidas.length) {
+      setError("Agregá al menos un ítem con descripción");
+      return;
+    }
     setLoading(true);
 
     const data = {
@@ -69,7 +173,7 @@ export default function PresupuestoEditor({ clientes, items, ivaPorcentajeDefaul
       validezDias,
       notas,
       ivaPorcentaje,
-      lineas: lineas.map((l, i) => ({
+      lineas: lineasValidas.map((l, i) => ({
         itemServicioId: l.itemServicioId,
         descripcionCustom: l.itemServicioId ? undefined : l.descripcion,
         cantidad: l.cantidad,
@@ -78,181 +182,241 @@ export default function PresupuestoEditor({ clientes, items, ivaPorcentajeDefaul
       })),
     };
 
-    const result = await createPresupuesto(data);
-    if (!result.success) { setError(result.error); setLoading(false); return; }
+    const result = presupuesto
+      ? await updatePresupuesto(presupuesto.id, data)
+      : await createPresupuesto(data);
+    if (!result.success) {
+      setError(result.error);
+      setLoading(false);
+      return;
+    }
     router.push(`/presupuestos/${result.data.id}`);
   }
 
-  const fmt = (n: number) => n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <div className="flex items-center gap-3">
-        <Link href="/presupuestos" className="text-muted-foreground hover:text-foreground"><ChevronLeft className="h-5 w-5" /></Link>
-        <h1 className="text-2xl font-semibold">Nuevo presupuesto</h1>
+    <div className="space-y-4">
+      {/* Barra de controles — oculta al imprimir */}
+      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+        <div className="flex items-center gap-3">
+          <Link href="/presupuestos" className="text-muted-foreground hover:text-foreground" aria-label="Volver a presupuestos">
+            <ChevronLeft className="h-5 w-5" />
+          </Link>
+          <h1 className="text-lg font-semibold">
+            {esEdicion ? `Editar ${codigoPresupuesto(presupuesto!.numero, fechaEmision)}` : "Nuevo presupuesto"}
+          </h1>
+        </div>
+        <div className="flex items-center gap-2">
+          {error && <span className="text-sm text-destructive">{error}</span>}
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={loading}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          >
+            {loading ? "Guardando..." : esEdicion ? "Guardar cambios" : "Guardar presupuesto"}
+          </button>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Encabezado */}
-        <div className="rounded-lg border bg-card p-5 space-y-4">
-          <h2 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Datos generales</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium">Cliente <span className="text-destructive">*</span></label>
-              <select value={clienteId} onChange={(e) => setClienteId(e.target.value)} required
-                className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring">
-                <option value="">Seleccioná un cliente</option>
-                {clientes.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-              </select>
+      {/* Documento WYSIWYG editable */}
+      <DocumentoShell>
+        <EmpresaEncabezado empresa={empresa} numero={presupuesto?.numero} fechaEmision={fechaEmision} fechaVencimiento={vencimiento} />
+
+        <hr className="mb-6 border-gray-200" />
+
+        {/* Cliente */}
+        <div className="mb-6">
+          <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Cliente
+          </span>
+          <Combobox
+            ariaLabel="Cliente"
+            className="max-w-sm print:hidden"
+            opciones={opcionesCliente}
+            value={clienteId}
+            onSelect={setClienteId}
+            onCrear={(q) => setCrearClienteQuery(q)}
+            placeholder="Buscá o creá un cliente..."
+          />
+          {cliente && (
+            <div className="mt-2 print:mt-0">
+              <p className="font-medium text-gray-900">{cliente.nombre}</p>
+              {cliente.cuit && <p className="text-sm text-gray-500">CUIT: {cliente.cuit}</p>}
+              {cliente.direccion && <p className="text-sm text-gray-500">{cliente.direccion}</p>}
+              {cliente.telefono && <p className="text-sm text-gray-500">Tel: {cliente.telefono}</p>}
             </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium">Validez</label>
-              <select value={validezDias} onChange={(e) => setValidezDias(Number(e.target.value))}
-                className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring">
-                <option value={10}>10 días</option>
-                <option value={15}>15 días</option>
-                <option value={30}>30 días</option>
-              </select>
-            </div>
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">Notas / observaciones</label>
-            <textarea value={notas} onChange={(e) => setNotas(e.target.value)} rows={2}
-              placeholder="Condiciones de pago, notas adicionales..."
-              className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring resize-none" />
-          </div>
+          )}
         </div>
 
-        {/* Líneas */}
-        <div className="rounded-lg border bg-card overflow-hidden">
-          <div className="px-5 py-3 border-b bg-muted/30 flex items-center justify-between">
-            <h2 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Ítems</h2>
-            <button type="button" onClick={addLinea}
-              className="flex items-center gap-1 text-xs text-primary hover:underline">
-              <Plus className="h-3.5 w-3.5" /> Agregar ítem
-            </button>
+        {/* Ítems — el tamaño de letra se auto-ajusta según la cantidad de líneas */}
+        <div className="mb-6" style={{ fontSize: `${itemFontPx}px` }}>
+          <div className="mb-1 flex gap-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="flex-1">Descripción</span>
+            <span className="w-20 text-right">Cant.</span>
+            <span className="w-28 text-right">Precio unit.</span>
+            <span className="w-28 text-right">Subtotal</span>
+            <span className="w-8 print:hidden" />
           </div>
+          <hr className="mb-2 border-gray-200" />
 
-          {/* Header tabla desktop */}
-          <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1fr_auto] gap-3 px-5 py-2 text-xs text-muted-foreground font-medium border-b bg-muted/20">
-            <span>Descripción</span><span className="text-center">Cant.</span>
-            <span className="text-right">Precio unit.</span><span className="text-right">Subtotal</span><span />
-          </div>
-
-          <div className="divide-y">
+          <div className="space-y-1">
             {lineas.map((linea, idx) => (
-              <div key={linea.id} className="p-4 md:px-5 md:py-3 space-y-3 md:space-y-0 md:grid md:grid-cols-[2fr_1fr_1fr_1fr_auto] md:gap-3 md:items-center">
-                {/* Descripción: select de item o texto libre */}
-                <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground md:hidden">Ítem {idx + 1}</label>
-                  <select
+              <div key={linea.id} className="flex items-start gap-2">
+                <div className="flex-1 space-y-1">
+                  <Combobox
+                    ariaLabel={`Ítem ${idx + 1}`}
+                    className="print:hidden"
+                    inputClassName="w-full rounded border border-gray-200 bg-white px-2 py-1 text-gray-900 outline-none focus:ring-1 focus:ring-blue-500"
+                    opciones={opcionesItem}
                     value={linea.itemServicioId ?? ""}
-                    onChange={(e) => updateLinea(linea.id, "itemServicioId", e.target.value)}
-                    className="w-full rounded-lg border bg-background px-2.5 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-                  >
-                    <option value="">— Descripción libre —</option>
-                    {items.map((i) => <option key={i.id} value={i.id}>{i.descripcion}</option>)}
-                  </select>
-                  {!linea.itemServicioId && (
+                    onSelect={(v) => updateLinea(linea.id, "itemServicioId", v)}
+                    onCrear={(q) => setCrearItem({ lineId: linea.id, query: q })}
+                    placeholder="Buscá, escribí o creá un ítem..."
+                  />
+                  {linea.itemServicioId ? (
+                    <>
+                      {/* En pantalla alcanza con el combobox; el <p> es para la impresión. */}
+                      <p className="hidden text-gray-900 print:block">{linea.descripcion}</p>
+                      <button
+                        type="button"
+                        onClick={() => updateLinea(linea.id, "itemServicioId", "")}
+                        className="text-xs text-gray-400 hover:text-gray-600 print:hidden"
+                      >
+                        Usar descripción libre
+                      </button>
+                    </>
+                  ) : (
                     <input
                       value={linea.descripcion}
                       onChange={(e) => updateLinea(linea.id, "descripcion", e.target.value)}
                       placeholder="Descripción del ítem"
-                      className="w-full rounded-lg border bg-background px-2.5 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                      className="w-full rounded border border-gray-200 bg-white px-2 py-1 text-gray-900 outline-none focus:ring-1 focus:ring-blue-500 print:border-0 print:px-0"
                     />
                   )}
                 </div>
-
-                {/* Cantidad */}
-                <div className="grid grid-cols-3 gap-2 md:block">
-                  <div>
-                    <label className="text-xs text-muted-foreground md:hidden">Cantidad</label>
-                    <input type="number" min="0.01" step="0.01" value={linea.cantidad}
-                      onChange={(e) => updateLinea(linea.id, "cantidad", Number(e.target.value))}
-                      className="w-full rounded-lg border bg-background px-2.5 py-2 text-sm text-center outline-none focus:ring-2 focus:ring-ring" />
-                  </div>
-                  {/* Precio */}
-                  <div>
-                    <label className="text-xs text-muted-foreground md:hidden">Precio</label>
-                    <input type="number" min="0" step="0.01" value={linea.precioUnitario}
-                      onChange={(e) => updateLinea(linea.id, "precioUnitario", Number(e.target.value))}
-                      className="w-full rounded-lg border bg-background px-2.5 py-2 text-sm text-right outline-none focus:ring-2 focus:ring-ring" />
-                  </div>
-                  {/* Subtotal mobile */}
-                  <div className="flex items-end justify-end md:hidden">
-                    <span className="text-sm font-semibold">${fmt(linea.cantidad * linea.precioUnitario)}</span>
-                  </div>
-                </div>
-
-                {/* Precio desktop */}
-                <div className="hidden md:block">
-                  <input type="number" min="0" step="0.01" value={linea.precioUnitario}
-                    onChange={(e) => updateLinea(linea.id, "precioUnitario", Number(e.target.value))}
-                    className="w-full rounded-lg border bg-background px-2.5 py-2 text-sm text-right outline-none focus:ring-2 focus:ring-ring" />
-                </div>
-
-                {/* Subtotal desktop */}
-                <div className="hidden md:flex items-center justify-end">
-                  <span className="text-sm font-semibold">${fmt(linea.cantidad * linea.precioUnitario)}</span>
-                </div>
-
-                {/* Eliminar */}
-                <button type="button" onClick={() => removeLinea(linea.id)}
+                <input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  aria-label={`Cantidad ítem ${idx + 1}`}
+                  value={linea.cantidad}
+                  onChange={(e) => updateLinea(linea.id, "cantidad", Number(e.target.value))}
+                  className="w-20 rounded border border-gray-200 bg-white px-2 py-1 text-right text-gray-900 outline-none focus:ring-1 focus:ring-blue-500 print:border-0 print:px-0"
+                />
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  aria-label={`Precio unitario ítem ${idx + 1}`}
+                  value={linea.precioUnitario}
+                  onChange={(e) => updateLinea(linea.id, "precioUnitario", Number(e.target.value))}
+                  className="w-28 rounded border border-gray-200 bg-white px-2 py-1 text-right text-gray-900 outline-none focus:ring-1 focus:ring-blue-500 print:border-0 print:px-0"
+                />
+                <span className="w-28 pt-1 text-right font-medium text-gray-900">
+                  {fmtMoneda(linea.cantidad * linea.precioUnitario)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removeLinea(linea.id)}
                   disabled={lineas.length === 1}
-                  className="hidden md:flex items-center justify-center text-muted-foreground hover:text-destructive disabled:opacity-30">
+                  aria-label={`Eliminar ítem ${idx + 1}`}
+                  className="flex w-8 items-center justify-center pt-1 text-gray-400 hover:text-destructive disabled:opacity-30 print:hidden"
+                >
                   <Trash2 className="h-4 w-4" />
                 </button>
-                {lineas.length > 1 && (
-                  <button type="button" onClick={() => removeLinea(linea.id)}
-                    className="md:hidden text-xs text-destructive hover:underline">
-                    Eliminar ítem
-                  </button>
-                )}
               </div>
             ))}
           </div>
+
+          <button
+            type="button"
+            onClick={addLinea}
+            className="mt-3 flex items-center gap-1 text-sm text-blue-600 hover:underline print:hidden"
+          >
+            <Plus className="h-3.5 w-3.5" /> Agregar línea
+          </button>
         </div>
 
         {/* Totales */}
-        <div className="rounded-lg border bg-card p-5 space-y-3">
-          <h2 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">Totales</h2>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Subtotal</span>
-              <span className="font-medium">${fmt(subtotal)}</span>
+        <div className="mb-6 flex justify-end">
+          <div className="w-64 space-y-1">
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Subtotal</span>
+              <span>{fmtMoneda(subtotal)}</span>
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">IVA</span>
-                <select value={ivaPorcentaje} onChange={(e) => setIvaPorcentaje(Number(e.target.value))}
-                  className="rounded border bg-background px-2 py-0.5 text-xs outline-none focus:ring-1 focus:ring-ring">
+            <div className="flex items-center justify-between text-sm text-gray-600">
+              <span className="flex items-center gap-1">
+                IVA
+                <select
+                  aria-label="Porcentaje de IVA"
+                  value={ivaPorcentaje}
+                  onChange={(e) => setIvaPorcentaje(Number(e.target.value))}
+                  className="ml-1 rounded border border-gray-200 bg-white px-1 py-0.5 text-xs text-gray-900 print:hidden"
+                >
                   <option value={0}>0%</option>
                   <option value={10.5}>10.5%</option>
                   <option value={21}>21%</option>
                   <option value={27}>27%</option>
                 </select>
-              </div>
-              <span className="font-medium">${fmt(ivaImporte)}</span>
+                <span className="hidden print:inline">{ivaPorcentaje}%</span>
+              </span>
+              <span>{fmtMoneda(ivaImporte)}</span>
             </div>
-            <div className="flex justify-between border-t pt-2 text-base font-semibold">
-              <span>Total</span>
-              <span>${fmt(total)}</span>
+            <hr className="border-gray-200" />
+            <div className="flex justify-between font-bold text-gray-900">
+              <span>TOTAL</span>
+              <span>{fmtMoneda(total)}</span>
             </div>
           </div>
         </div>
 
-        {error && (
-          <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</div>
-        )}
-
-        <div className="flex gap-3">
-          <button type="submit" disabled={loading}
-            className="flex-1 rounded-lg bg-primary py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
-            {loading ? "Guardando..." : "Crear presupuesto"}
-          </button>
-          <Link href="/presupuestos" className="rounded-lg border px-5 py-3 text-sm font-medium hover:bg-accent">Cancelar</Link>
+        {/* Validez */}
+        <div className="mb-4 text-xs text-gray-500">
+          <span className="flex flex-wrap items-center gap-1">
+            Validez:
+            <select
+              aria-label="Validez en días"
+              value={validezDias}
+              onChange={(e) => setValidezDias(Number(e.target.value))}
+              className="ml-1 rounded border border-gray-200 bg-white px-1 py-0.5 text-xs text-gray-900 print:hidden"
+            >
+              <option value={10}>10 días</option>
+              <option value={15}>15 días</option>
+              <option value={30}>30 días</option>
+            </select>
+            <span className="hidden print:inline">{validezDias} días</span>
+            — Este presupuesto es válido hasta el {fmtFecha(vencimiento)}.
+          </span>
         </div>
-      </form>
+
+        {/* Notas */}
+        <div>
+          <textarea
+            value={notas}
+            onChange={(e) => setNotas(e.target.value)}
+            placeholder="Notas adicionales (condiciones de pago, observaciones...)"
+            rows={3}
+            className="w-full resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 outline-none focus:ring-1 focus:ring-blue-500 print:hidden"
+          />
+          {notas && <p className="hidden whitespace-pre-line text-sm text-gray-600 print:block">{notas}</p>}
+        </div>
+      </DocumentoShell>
+
+      {crearClienteQuery !== null && (
+        <CrearClienteModal
+          nombreInicial={crearClienteQuery}
+          onClose={() => setCrearClienteQuery(null)}
+          onCreado={onClienteCreado}
+        />
+      )}
+
+      {crearItem && (
+        <CrearItemModal
+          descripcionInicial={crearItem.query}
+          onClose={() => setCrearItem(null)}
+          onCreado={(item) => onItemCreado(crearItem.lineId, item)}
+        />
+      )}
     </div>
   );
 }

@@ -19,7 +19,7 @@ export default async function NuevaCargaPage({
   const [vehiculos, empleados] = await Promise.all([
     db.vehiculo.findMany({
       where: { estado: "ACTIVO" },
-      select: { id: true, patente: true, marca: true, modelo: true },
+      select: { id: true, patente: true, marca: true, modelo: true, odometroActual: true },
       orderBy: { patente: "asc" },
     }),
     db.empleado.findMany({

@@ -114,6 +114,66 @@ export async function createPresupuesto(rawData: unknown): Promise<ActionResult<
   return { success: true, data: { id: presupuesto.id } };
 }
 
+export async function updatePresupuesto(id: string, rawData: unknown): Promise<ActionResult<{ id: string }>> {
+  const { session, error } = await guardPresupuestos();
+  if (!session) return { success: false, error: error! };
+
+  const existente = await db.presupuesto.findUnique({
+    where: { id },
+    select: { estado: true, numero: true, fechaEmision: true },
+  });
+  if (!existente) return { success: false, error: "Presupuesto no encontrado" };
+  if (existente.estado !== EstadoPresupuesto.BORRADOR) {
+    return { success: false, error: "Solo se pueden editar presupuestos en borrador" };
+  }
+
+  const parsed = presupuestoSchema.safeParse(rawData);
+  if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
+
+  const { clienteId, validezDias, notas, ivaPorcentaje, lineas } = parsed.data;
+
+  const subtotal = lineas.reduce((s, l) => s + l.cantidad * l.precioUnitario, 0);
+  const ivaImporte = subtotal * (ivaPorcentaje / 100);
+  const total = subtotal + ivaImporte;
+
+  // Se conserva la fecha de emisión original; el vencimiento se recalcula con la validez.
+  const fechaVencimiento = new Date(existente.fechaEmision);
+  fechaVencimiento.setDate(fechaVencimiento.getDate() + validezDias);
+
+  // Reemplaza las líneas: borra las anteriores y recrea desde cero, en una transacción.
+  await db.$transaction([
+    db.presupuestoItem.deleteMany({ where: { presupuestoId: id } }),
+    db.presupuesto.update({
+      where: { id },
+      data: {
+        clienteId,
+        validezDias,
+        notas,
+        ivaPorcentaje,
+        ivaImporte,
+        subtotal,
+        total,
+        fechaVencimiento,
+        items: {
+          create: lineas.map((l) => ({
+            itemServicioId: l.itemServicioId || null,
+            descripcionCustom: l.descripcionCustom || null,
+            cantidad: l.cantidad,
+            precioUnitario: l.precioUnitario,
+            subtotal: l.cantidad * l.precioUnitario,
+            orden: l.orden,
+          })),
+        },
+      },
+    }),
+  ]);
+
+  void logAudit({ empleadoId: session.user.id, accion: "EDITAR_PRESUPUESTO", modulo: "PRESUPUESTOS", entidadId: id, entidadNombre: `#${existente.numero}`, detalles: { clienteId, total, ivaPorcentaje } });
+  revalidatePath("/presupuestos");
+  revalidatePath(`/presupuestos/${id}`);
+  return { success: true, data: { id } };
+}
+
 export async function cambiarEstado(id: string, estado: EstadoPresupuesto): Promise<ActionResult> {
   const { session, error } = await guardPresupuestos();
   if (!session) return { success: false, error: error! };

@@ -2,47 +2,84 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon, Monitor, Shuffle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const ACCENT_COLORS = [
-  { key: "default", label: "Azul",    class: "bg-[oklch(0.546_0.245_262.881)]" },
-  { key: "sky",     label: "Celeste", class: "bg-[oklch(0.62_0.17_237)]" },
-  { key: "indigo",  label: "Índigo",  class: "bg-[oklch(0.511_0.262_277)]" },
-  { key: "teal",    label: "Verde",   class: "bg-[oklch(0.55_0.13_185)]" },
-  { key: "emerald", label: "Esmeralda",class:"bg-[oklch(0.53_0.15_163)]" },
-  { key: "violet",  label: "Violeta", class: "bg-[oklch(0.541_0.281_293)]" },
-] as const;
-
-type AccentKey = (typeof ACCENT_COLORS)[number]["key"];
-
-function getStoredAccent(): AccentKey {
-  if (typeof window === "undefined") return "default";
-  return (localStorage.getItem("accent-color") as AccentKey) ?? "default";
+/**
+ * El acento se define por dos variables CSS (--accent-hue / --accent-chroma) que
+ * globals.css usa para derivar --primary, --ring, sidebar y chart-1 tanto en
+ * claro como en oscuro. Cambiar el acento = sobreescribir esas dos variables en
+ * <html>. Esto permite paleta extensible y un acento aleatorio sin reglas CSS por color.
+ */
+interface Accent {
+  key: string;
+  label: string;
+  hue: number;
+  chroma: number;
 }
 
-function applyAccent(key: AccentKey) {
+const ACCENT_COLORS: Accent[] = [
+  { key: "blue",    label: "Azul",      hue: 262.881, chroma: 0.245 },
+  { key: "sky",     label: "Celeste",   hue: 237,     chroma: 0.17 },
+  { key: "indigo",  label: "Índigo",    hue: 277,     chroma: 0.262 },
+  { key: "violet",  label: "Violeta",   hue: 293,     chroma: 0.281 },
+  { key: "fuchsia", label: "Fucsia",    hue: 322,     chroma: 0.26 },
+  { key: "rose",    label: "Rosa",      hue: 12,      chroma: 0.22 },
+  { key: "red",     label: "Rojo",      hue: 27,      chroma: 0.245 },
+  { key: "orange",  label: "Naranja",   hue: 55,      chroma: 0.18 },
+  { key: "amber",   label: "Ámbar",     hue: 85,      chroma: 0.16 },
+  { key: "emerald", label: "Esmeralda", hue: 163,     chroma: 0.15 },
+  { key: "teal",    label: "Verde",     hue: 185,     chroma: 0.13 },
+  { key: "cyan",    label: "Cian",      hue: 215,     chroma: 0.15 },
+];
+
+const STORAGE_KEY = "accent-key";
+const STORAGE_HUE = "accent-hue";
+const STORAGE_CHROMA = "accent-chroma";
+
+function swatch(hue: number, chroma: number): string {
+  return `oklch(0.6 ${chroma} ${hue})`;
+}
+
+function applyAccent(hue: number, chroma: number) {
   const html = document.documentElement;
-  html.removeAttribute("data-accent");
-  if (key !== "default") html.setAttribute("data-accent", key);
-  localStorage.setItem("accent-color", key);
+  html.style.setProperty("--accent-hue", String(hue));
+  html.style.setProperty("--accent-chroma", String(chroma));
+  localStorage.setItem(STORAGE_HUE, String(hue));
+  localStorage.setItem(STORAGE_CHROMA, String(chroma));
 }
 
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
-  const [accent, setAccent] = useState<AccentKey>("default");
+  const [accentKey, setAccentKey] = useState<string>("blue");
+  const [randomSwatch, setRandomSwatch] = useState<string>(swatch(0, 0.2));
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const stored = getStoredAccent();
-    setAccent(stored);
-    applyAccent(stored);
+    const key = localStorage.getItem(STORAGE_KEY) ?? "blue";
+    const hue = Number(localStorage.getItem(STORAGE_HUE));
+    const chroma = Number(localStorage.getItem(STORAGE_CHROMA));
+    setAccentKey(key);
+    if (Number.isFinite(hue) && hue > 0 && Number.isFinite(chroma) && chroma > 0) {
+      applyAccent(hue, chroma);
+      if (key === "random") setRandomSwatch(swatch(hue, chroma));
+    }
   }, []);
 
-  function handleAccent(key: AccentKey) {
-    setAccent(key);
-    applyAccent(key);
+  function selectAccent(a: Accent) {
+    setAccentKey(a.key);
+    localStorage.setItem(STORAGE_KEY, a.key);
+    applyAccent(a.hue, a.chroma);
+  }
+
+  function randomize() {
+    const hue = Math.round(Math.random() * 360);
+    const chroma = +(0.14 + Math.random() * 0.12).toFixed(3); // 0.14–0.26
+    setAccentKey("random");
+    setRandomSwatch(swatch(hue, chroma));
+    localStorage.setItem(STORAGE_KEY, "random");
+    applyAccent(hue, chroma);
   }
 
   if (!mounted) return null;
@@ -62,6 +99,7 @@ export function ThemeSelector() {
               key={opt.value}
               onClick={() => setTheme(opt.value)}
               title={opt.label}
+              aria-pressed={theme === opt.value}
               className={cn(
                 "flex flex-1 items-center justify-center gap-1 rounded-md px-2 py-1.5 text-xs transition-colors",
                 theme === opt.value
@@ -83,15 +121,31 @@ export function ThemeSelector() {
           {ACCENT_COLORS.map((color) => (
             <button
               key={color.key}
-              onClick={() => handleAccent(color.key)}
+              onClick={() => selectAccent(color)}
               title={color.label}
+              aria-label={`Color ${color.label}`}
+              aria-pressed={accentKey === color.key}
+              style={{ backgroundColor: swatch(color.hue, color.chroma) }}
               className={cn(
                 "h-5 w-5 rounded-full transition-transform hover:scale-110",
-                color.class,
-                accent === color.key && "ring-2 ring-offset-1 ring-foreground/40 scale-110"
+                accentKey === color.key && "ring-2 ring-offset-1 ring-foreground/40 scale-110"
               )}
             />
           ))}
+          {/* Acento aleatorio */}
+          <button
+            onClick={randomize}
+            title="Color aleatorio"
+            aria-label="Color aleatorio"
+            aria-pressed={accentKey === "random"}
+            style={accentKey === "random" ? { backgroundColor: randomSwatch } : undefined}
+            className={cn(
+              "flex h-5 w-5 items-center justify-center rounded-full border border-dashed border-foreground/30 text-muted-foreground transition-transform hover:scale-110",
+              accentKey === "random" && "ring-2 ring-offset-1 ring-foreground/40 scale-110 border-transparent text-white"
+            )}
+          >
+            <Shuffle className="h-2.5 w-2.5" />
+          </button>
         </div>
       </div>
     </div>

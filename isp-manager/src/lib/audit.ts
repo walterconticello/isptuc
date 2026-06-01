@@ -13,7 +13,7 @@ export type AuditAccion =
   | "CREAR_CUADRILLA" | "EDITAR_CUADRILLA" | "ACTIVAR_CUADRILLA" | "DESACTIVAR_CUADRILLA"
   | "AGREGAR_MIEMBRO_CUADRILLA" | "REMOVER_MIEMBRO_CUADRILLA"
   // Presupuestos
-  | "CREAR_PRESUPUESTO" | "CAMBIAR_ESTADO_PRESUPUESTO"
+  | "CREAR_PRESUPUESTO" | "EDITAR_PRESUPUESTO" | "CAMBIAR_ESTADO_PRESUPUESTO"
   // Clientes
   | "CREAR_CLIENTE" | "EDITAR_CLIENTE"
   // Items
@@ -74,6 +74,7 @@ export const ACCION_LABEL: Record<AuditAccion, string> = {
   AGREGAR_MIEMBRO_CUADRILLA:  "Agregar miembro a cuadrilla",
   REMOVER_MIEMBRO_CUADRILLA:  "Remover miembro de cuadrilla",
   CREAR_PRESUPUESTO:          "Crear presupuesto",
+  EDITAR_PRESUPUESTO:         "Editar presupuesto",
   CAMBIAR_ESTADO_PRESUPUESTO: "Cambiar estado de presupuesto",
   CREAR_CLIENTE:              "Crear cliente",
   EDITAR_CLIENTE:             "Editar cliente",

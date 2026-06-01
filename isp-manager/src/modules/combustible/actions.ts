@@ -8,6 +8,7 @@ import { checkPermission } from "@/lib/permissions";
 import { combustibleSchema } from "@/lib/validations";
 import { Modulo, TipoCombustible } from "@/generated/prisma/enums";
 import { type FiltrosCombustible, whereCombustible } from "./filtros";
+import { calcularPrecioPorLitro, calcularKmDesdeUltimo, calcularConsumo } from "./calculos";
 
 type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string };
 
@@ -62,49 +63,75 @@ export async function createRegistroCombustible(rawData: unknown): Promise<Actio
   const parsed = combustibleSchema.safeParse(rawData);
   if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
 
-  // Calcular km desde el último registro y consumo
-  const ultimo = await db.registroCombustible.findFirst({
-    where: { vehiculoId: parsed.data.vehiculoId },
-    orderBy: { odometro: "desc" },
+  const { vehiculoId, empleadoId, fecha, litros, costoTotal, odometro, tipoCombustible, estacion, notas } = parsed.data;
+
+  // El precio por litro se calcula a partir del total del ticket.
+  const precioPorLitro = calcularPrecioPorLitro(costoTotal, litros);
+
+  // Buscar registros vecinos por odómetro: soporta cargas viejas (retroactivas)
+  // insertadas en el medio del historial, no solo la última.
+  const [anterior, siguiente, duplicado] = await Promise.all([
+    db.registroCombustible.findFirst({
+      where: { vehiculoId, odometro: { lt: odometro } },
+      orderBy: { odometro: "desc" },
+    }),
+    db.registroCombustible.findFirst({
+      where: { vehiculoId, odometro: { gt: odometro } },
+      orderBy: { odometro: "asc" },
+    }),
+    db.registroCombustible.findFirst({
+      where: { vehiculoId, odometro },
+    }),
+  ]);
+
+  if (duplicado) {
+    return { success: false, error: `Ya existe una carga con ${odometro.toLocaleString("es-AR")} km para este vehículo.` };
+  }
+
+  const kmDesdeUltimo = calcularKmDesdeUltimo(odometro, anterior?.odometro ?? null);
+  const consumo = calcularConsumo(litros, kmDesdeUltimo);
+
+  const registro = await db.$transaction(async (tx) => {
+    const creado = await tx.registroCombustible.create({
+      data: {
+        vehiculoId,
+        empleadoId,
+        fecha: new Date(fecha),
+        litros,
+        precioPorLitro,
+        costoTotal,
+        odometro,
+        kmDesdeUltimo,
+        consumo,
+        tipoCombustible: tipoCombustible as TipoCombustible,
+        estacion,
+        notas,
+      },
+    });
+
+    // Si había una carga posterior, ahora su predecesor cambió: recalcular sus
+    // km recorridos y consumo respecto de la carga recién insertada.
+    if (siguiente) {
+      const kmSiguiente = calcularKmDesdeUltimo(siguiente.odometro, odometro);
+      await tx.registroCombustible.update({
+        where: { id: siguiente.id },
+        data: { kmDesdeUltimo: kmSiguiente, consumo: calcularConsumo(siguiente.litros, kmSiguiente) },
+      });
+    }
+
+    // Solo actualizar el odómetro del vehículo si esta es la carga más reciente.
+    if (!siguiente) {
+      await tx.vehiculo.updateMany({
+        where: { id: vehiculoId, odometroActual: { lt: odometro } },
+        data: { odometroActual: odometro },
+      });
+    }
+
+    return creado;
   });
 
-  const kmDesdeUltimo =
-    ultimo && parsed.data.odometro > ultimo.odometro
-      ? parsed.data.odometro - ultimo.odometro
-      : null;
-
-  const consumo =
-    kmDesdeUltimo && kmDesdeUltimo > 0
-      ? parsed.data.litros / (kmDesdeUltimo / 100)
-      : null;
-
-  const costoTotal = parsed.data.litros * parsed.data.precioPorLitro;
-
-  const registro = await db.registroCombustible.create({
-    data: {
-      vehiculoId: parsed.data.vehiculoId,
-      empleadoId: parsed.data.empleadoId,
-      fecha: new Date(parsed.data.fecha),
-      litros: parsed.data.litros,
-      precioPorLitro: parsed.data.precioPorLitro,
-      costoTotal,
-      odometro: parsed.data.odometro,
-      kmDesdeUltimo,
-      consumo,
-      tipoCombustible: parsed.data.tipoCombustible as TipoCombustible,
-      estacion: parsed.data.estacion,
-      notas: parsed.data.notas,
-    },
-  });
-
-  // Actualizar odómetro del vehículo si es mayor al actual
-  await db.vehiculo.updateMany({
-    where: { id: parsed.data.vehiculoId, odometroActual: { lt: parsed.data.odometro } },
-    data: { odometroActual: parsed.data.odometro },
-  });
-
-  void logAudit({ empleadoId: session.user.id, accion: "REGISTRAR_COMBUSTIBLE", modulo: "COMBUSTIBLE", entidadId: registro.id, detalles: { vehiculoId: parsed.data.vehiculoId, litros: parsed.data.litros, costoTotal, odometro: parsed.data.odometro, tipoCombustible: parsed.data.tipoCombustible } });
+  void logAudit({ empleadoId: session.user.id, accion: "REGISTRAR_COMBUSTIBLE", modulo: "COMBUSTIBLE", entidadId: registro.id, detalles: { vehiculoId, litros, costoTotal, precioPorLitro, odometro, tipoCombustible } });
   revalidatePath("/combustible");
-  revalidatePath(`/flota/${parsed.data.vehiculoId}`);
+  revalidatePath(`/flota/${vehiculoId}`);
   return { success: true, data: { id: registro.id } };
 }

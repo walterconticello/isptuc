@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { checkPermission } from "@/lib/permissions";
 import { getPresupuestos } from "@/modules/presupuestos/actions";
+import { codigoPresupuesto } from "@/modules/presupuestos/codigo";
 import { Modulo, EstadoPresupuesto } from "@/generated/prisma/enums";
 import { cn } from "@/lib/utils";
 import { Plus, FileText } from "lucide-react";
@@ -47,7 +48,7 @@ export default async function PresupuestosPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-muted/50">
-              <th className="px-4 py-3 text-left font-medium">N°</th>
+              <th className="px-4 py-3 text-left font-medium">Código</th>
               <th className="px-4 py-3 text-left font-medium">Cliente</th>
               <th className="px-4 py-3 text-left font-medium">Fecha</th>
               <th className="px-4 py-3 text-left font-medium">Vence</th>
@@ -59,7 +60,7 @@ export default async function PresupuestosPage() {
           <tbody>
             {presupuestos.map((p) => (
               <tr key={p.id} className="border-b last:border-0 hover:bg-muted/30">
-                <td className="px-4 py-3 font-mono text-muted-foreground">#{String(p.numero).padStart(4, "0")}</td>
+                <td className="px-4 py-3 font-mono text-muted-foreground">{codigoPresupuesto(p.numero, new Date(p.fechaEmision))}</td>
                 <td className="px-4 py-3 font-medium">{p.cliente.nombre}</td>
                 <td className="px-4 py-3 text-muted-foreground">{format(new Date(p.fechaEmision), "dd/MM/yy", { locale: es })}</td>
                 <td className="px-4 py-3 text-muted-foreground">{format(new Date(p.fechaVencimiento), "dd/MM/yy", { locale: es })}</td>
@@ -92,7 +93,7 @@ export default async function PresupuestosPage() {
               </span>
             </div>
             <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>#{String(p.numero).padStart(4, "0")} · {format(new Date(p.fechaEmision), "dd/MM/yy", { locale: es })}</span>
+              <span>{codigoPresupuesto(p.numero, new Date(p.fechaEmision))} · {format(new Date(p.fechaEmision), "dd/MM/yy", { locale: es })}</span>
               <span className="font-semibold text-foreground">${Number(p.total).toLocaleString("es-AR", { maximumFractionDigits: 0 })}</span>
             </div>
           </Link>

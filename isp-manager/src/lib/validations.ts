@@ -31,7 +31,7 @@ export const loginSchema = z.object({
   password: z.string().min(1, "La contraseña es requerida"),
 });
 
-const tiposVehiculo = ["AUTO", "CAMIONETA", "MOTO", "FURGON"] as const;
+const tiposVehiculo = ["AUTO", "CAMIONETA", "MOTO", "FURGON", "EQUIPO", "OTRO"] as const;
 const estadosVehiculo = ["ACTIVO", "MANTENIMIENTO", "INACTIVO"] as const;
 const tiposCombustible = ["NAFTA", "DIESEL", "GNC", "PREMIUM"] as const;
 
@@ -52,7 +52,7 @@ export const combustibleSchema = z.object({
   empleadoId: z.string().min(1, "Seleccioná un empleado"),
   fecha: z.string().min(1, "La fecha es requerida"),
   litros: z.coerce.number().positive("Los litros deben ser positivos"),
-  precioPorLitro: z.coerce.number().positive("El precio debe ser positivo"),
+  costoTotal: z.coerce.number().positive("El total del ticket debe ser positivo"),
   odometro: z.coerce.number().min(0, "El odómetro no puede ser negativo"),
   tipoCombustible: z.enum(tiposCombustible, { message: "Tipo de combustible inválido" }),
   estacion: z.string().optional(),

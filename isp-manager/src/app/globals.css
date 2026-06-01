@@ -46,13 +46,17 @@
 }
 
 :root {
+  /* Acento configurable: el selector de color sobreescribe estas dos variables.
+     --primary, --ring, sidebar y chart-1 derivan de acá en claro y oscuro. */
+  --accent-hue: 262.881;
+  --accent-chroma: 0.245;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.546 0.245 262.881);
+  --primary: oklch(0.546 var(--accent-chroma) var(--accent-hue));
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -63,8 +67,8 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.546 0.245 262.881);
-  --chart-1: oklch(0.546 0.245 262.881);
+  --ring: oklch(0.546 var(--accent-chroma) var(--accent-hue));
+  --chart-1: oklch(0.546 var(--accent-chroma) var(--accent-hue));
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.596 0.145 163.225);
   --chart-4: oklch(0.541 0.281 293.009);
@@ -72,12 +76,12 @@
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.546 0.245 262.881);
+  --sidebar-primary: oklch(0.546 var(--accent-chroma) var(--accent-hue));
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.94 0.02 262.881);
+  --sidebar-accent: oklch(0.94 0.02 var(--accent-hue));
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.546 0.245 262.881);
+  --sidebar-ring: oklch(0.546 var(--accent-chroma) var(--accent-hue));
 }
 
 .dark {
@@ -87,7 +91,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.19 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.6 0.22 262.881);
+  --primary: oklch(0.6 calc(var(--accent-chroma) * 0.9) var(--accent-hue));
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.25 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -98,20 +102,30 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.6 0.22 262.881);
-  --chart-1: oklch(0.6 0.22 262.881);
+  --ring: oklch(0.6 calc(var(--accent-chroma) * 0.9) var(--accent-hue));
+  --chart-1: oklch(0.6 calc(var(--accent-chroma) * 0.9) var(--accent-hue));
   --chart-2: oklch(0.65 0.118 184.704);
   --chart-3: oklch(0.65 0.145 163.225);
   --chart-4: oklch(0.6 0.281 293.009);
   --chart-5: oklch(0.65 0.191 22.216);
   --sidebar: oklch(0.18 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.6 0.22 262.881);
+  --sidebar-primary: oklch(0.6 calc(var(--accent-chroma) * 0.9) var(--accent-hue));
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.25 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.6 0.22 262.881);
+  --sidebar-ring: oklch(0.6 calc(var(--accent-chroma) * 0.9) var(--accent-hue));
+}
+
+:root {
+  /* Escala tipográfica modular con paso φ^(1/3) ≈ 1.175 (tres pasos = 1 golden
+     ratio). Da una jerarquía armónica sin saltos bruscos. Base 1rem. */
+  --step--1: 0.852rem;  /* ~13.6px — texto secundario */
+  --step-0: 1rem;       /* 16px — cuerpo */
+  --step-1: 1.175rem;   /* ~18.8px */
+  --step-2: 1.381rem;   /* ~22px */
+  --step-3: 1.623rem;   /* ~26px — = base · φ */
 }
 
 @layer base {
@@ -120,5 +134,17 @@
   }
   body {
     @apply bg-background text-foreground;
+    line-height: 1.6; /* ritmo de lectura cómodo (cercano a φ) */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Jerarquía: títulos más ajustados y con buen wrapping; párrafos legibles. */
+  h1, h2, h3, h4 {
+    line-height: 1.2;
+    letter-spacing: -0.011em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
 }
