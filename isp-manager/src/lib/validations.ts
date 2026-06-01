@@ -64,6 +64,17 @@ export const cuadrillaSchema = z.object({
   descripcion: z.string().optional(),
 });
 
+export const agregarMiembroSchema = z.object({
+  cuadrillaId: z.string().min(1, "Cuadrilla inválida"),
+  empleadoId: z.string().min(1, "Empleado inválido"),
+  esJefe: z.boolean().default(false),
+});
+
+export const removerMiembroSchema = z.object({
+  cuadrillaId: z.string().min(1, "Cuadrilla inválida"),
+  empleadoId: z.string().min(1, "Empleado inválido"),
+});
+
 export type CrearEmpleadoInput = z.infer<typeof crearEmpleadoSchema>;
 export type EditarEmpleadoInput = z.infer<typeof editarEmpleadoSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
