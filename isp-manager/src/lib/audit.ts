@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 
 export type AuditAccion =
   // Auth
-  | "LOGIN_EXITOSO" | "LOGIN_FALLIDO" | "LOGOUT"
+  | "LOGIN_EXITOSO" | "LOGIN_FALLIDO" | "LOGIN_BLOQUEADO" | "LOGOUT"
   // Empleados
   | "CREAR_EMPLEADO" | "EDITAR_EMPLEADO" | "ACTIVAR_EMPLEADO" | "DESACTIVAR_EMPLEADO"
   // Flota
@@ -59,6 +59,7 @@ export async function logAudit(params: LogParams): Promise<void> {
 export const ACCION_LABEL: Record<AuditAccion, string> = {
   LOGIN_EXITOSO:              "Inicio de sesión",
   LOGIN_FALLIDO:              "Intento de login fallido",
+  LOGIN_BLOQUEADO:            "Login bloqueado por intentos",
   LOGOUT:                     "Cierre de sesión",
   CREAR_EMPLEADO:             "Crear empleado",
   EDITAR_EMPLEADO:            "Editar empleado",
