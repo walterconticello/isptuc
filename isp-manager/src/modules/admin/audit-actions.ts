@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { checkPermission } from "@/lib/permissions";
+import { normalizarPaginacion } from "@/lib/validations";
 import { Modulo } from "@/generated/prisma/enums";
 
 export async function getAuditLogs({
@@ -36,12 +37,14 @@ export async function getAuditLogs({
     } : {}),
   };
 
+  const pag = normalizarPaginacion(page, pageSize, 50);
+
   const [logs, total] = await Promise.all([
     db.auditLog.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      skip: (page - 1) * pageSize,
-      take: pageSize,
+      skip: (pag.page - 1) * pag.pageSize,
+      take: pag.pageSize,
       include: {
         empleado: { select: { nombre: true, apellido: true, rol: true } },
       },
@@ -49,5 +52,5 @@ export async function getAuditLogs({
     db.auditLog.count({ where }),
   ]);
 
-  return { success: true as const, data: { logs, total, page, pageSize } };
+  return { success: true as const, data: { logs, total, page: pag.page, pageSize: pag.pageSize } };
 }

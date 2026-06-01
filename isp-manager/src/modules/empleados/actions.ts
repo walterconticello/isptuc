@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { checkPermission, puedeGestionarRol, getRolEmpleado } from "@/lib/permissions";
-import { crearEmpleadoSchema, editarEmpleadoSchema } from "@/lib/validations";
+import { crearEmpleadoSchema, editarEmpleadoSchema, normalizarPaginacion } from "@/lib/validations";
 import { Modulo } from "@/generated/prisma/enums";
 import bcrypt from "bcryptjs";
 
@@ -26,11 +26,13 @@ export async function getEmpleados(page = 1, pageSize = 20) {
   const ok = await checkPermission(session.user.id, Modulo.EMPLEADOS);
   if (!ok) return { success: false as const, error: "Sin permisos" };
 
+  const pag = normalizarPaginacion(page, pageSize, 20);
+
   const [empleados, total] = await Promise.all([
     db.empleado.findMany({
       orderBy: [{ apellido: "asc" }, { nombre: "asc" }],
-      skip: (page - 1) * pageSize,
-      take: pageSize,
+      skip: (pag.page - 1) * pag.pageSize,
+      take: pag.pageSize,
       select: {
         id: true, nombre: true, apellido: true, email: true,
         dni: true, telefono: true, rol: true, activo: true, createdAt: true,
@@ -39,7 +41,7 @@ export async function getEmpleados(page = 1, pageSize = 20) {
     db.empleado.count(),
   ]);
 
-  return { success: true as const, data: { empleados, total, page, pageSize } };
+  return { success: true as const, data: { empleados, total, page: pag.page, pageSize: pag.pageSize } };
 }
 
 export async function getEmpleadoById(id: string) {

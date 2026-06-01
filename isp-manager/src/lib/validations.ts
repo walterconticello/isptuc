@@ -75,6 +75,24 @@ export const removerMiembroSchema = z.object({
   empleadoId: z.string().min(1, "Empleado inválido"),
 });
 
+// Tope de filas por página para evitar consultas desmesuradas (DoS) o skip negativo.
+export const PAGE_SIZE_MAX = 100;
+
+/**
+ * Acota los parámetros de paginación: page mínimo 1, pageSize entre 1 y
+ * PAGE_SIZE_MAX. Valores inválidos o ausentes caen al default del endpoint.
+ * Cierra el hallazgo V3.
+ */
+export function normalizarPaginacion(
+  page?: number,
+  pageSize?: number,
+  pageSizePorDefecto = 20
+): { page: number; pageSize: number } {
+  const pageOk = z.coerce.number().int().min(1).catch(1).parse(page);
+  const sizeOk = z.coerce.number().int().min(1).catch(pageSizePorDefecto).parse(pageSize);
+  return { page: pageOk, pageSize: Math.min(sizeOk, PAGE_SIZE_MAX) };
+}
+
 export type CrearEmpleadoInput = z.infer<typeof crearEmpleadoSchema>;
 export type EditarEmpleadoInput = z.infer<typeof editarEmpleadoSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
