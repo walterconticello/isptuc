@@ -137,7 +137,7 @@ export default function LoginPage() {
         <div className="flex flex-col items-center mb-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/logo_isp.jpeg"
+            src="/logo_isp_v2.png"
             alt="ISP Tucumán"
             className="h-14 w-auto mb-1.5 block"
             style={{
