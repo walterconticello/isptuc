@@ -11,17 +11,19 @@ export default async function NuevoPresupuestoPage() {
   const ok = await checkPermission(session.user.id, Modulo.PRESUPUESTOS);
   if (!ok) redirect("/dashboard");
 
-  const [clientes, items, impuesto] = await Promise.all([
+  const [clientes, items, impuesto, empresa] = await Promise.all([
     db.cliente.findMany({ orderBy: { nombre: "asc" }, select: { id: true, nombre: true, cuit: true, email: true, telefono: true, direccion: true } }),
     db.itemServicio.findMany({ where: { activo: true }, orderBy: { descripcion: "asc" } })
       .then((rows) => rows.map((r) => ({ ...r, precioUnitario: Number(r.precioUnitario) }))),
     db.impuesto.findFirst({ where: { esDefault: true, activo: true } }),
+    db.empresa.findFirst(),
   ]);
 
   return (
     <PresupuestoEditor
       clientes={clientes}
       items={items}
+      empresa={empresa}
       ivaPorcentajeDefault={impuesto ? Number(impuesto.porcentaje) : 21}
     />
   );

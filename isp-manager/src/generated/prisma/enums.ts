@@ -40,7 +40,9 @@ export const TipoVehiculo = {
   AUTO: 'AUTO',
   CAMIONETA: 'CAMIONETA',
   MOTO: 'MOTO',
-  FURGON: 'FURGON'
+  FURGON: 'FURGON',
+  EQUIPO: 'EQUIPO',
+  OTRO: 'OTRO'
 } as const
 
 export type TipoVehiculo = (typeof TipoVehiculo)[keyof typeof TipoVehiculo]

@@ -4,6 +4,14 @@ import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { loginSchema } from "@/lib/validations";
 import { logAudit } from "@/lib/audit";
+import { assertSecretValido } from "@/lib/auth-secret";
+import { superaLimiteIntentos, VENTANA_LOGIN_MS } from "@/lib/rate-limit";
+
+// Falla el arranque en producción si el secreto de sesión es débil o ausente.
+assertSecretValido(
+  process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+  process.env.NODE_ENV ?? "development"
+);
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -19,6 +27,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const empleado = await db.empleado.findUnique({
           where: { email: parsed.data.email },
         });
+
+        // Rate limiting: bloquea la cuenta tras demasiados intentos fallidos
+        // recientes, antes de comparar la contraseña. Frena fuerza bruta (A4).
+        if (empleado) {
+          const desde = new Date(Date.now() - VENTANA_LOGIN_MS);
+          const intentosFallidos = await db.auditLog.count({
+            where: {
+              accion: "LOGIN_FALLIDO",
+              empleadoId: empleado.id,
+              createdAt: { gte: desde },
+            },
+          });
+          if (superaLimiteIntentos(intentosFallidos)) {
+            await logAudit({ empleadoId: empleado.id, accion: "LOGIN_BLOQUEADO", modulo: "AUTH", detalles: { email: parsed.data.email } });
+            return null;
+          }
+        }
 
         if (!empleado) {
           await logAudit({ accion: "LOGIN_FALLIDO", modulo: "AUTH", detalles: { email: parsed.data.email, motivo: "email no encontrado" } });

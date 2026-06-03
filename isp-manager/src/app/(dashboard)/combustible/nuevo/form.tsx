@@ -5,13 +5,22 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createRegistroCombustible } from "@/modules/combustible/actions";
 import { combustibleSchema } from "@/lib/validations";
+import { calcularPrecioPorLitro } from "@/modules/combustible/calculos";
 import { TIPO_COMBUSTIBLE_LABEL } from "@/lib/labels";
 import { TipoCombustible } from "@/generated/prisma/enums";
 import { ChevronLeft } from "lucide-react";
 import { format } from "date-fns";
 
+interface Vehiculo {
+  id: string;
+  patente: string;
+  marca: string;
+  modelo: string;
+  odometroActual: number;
+}
+
 interface Props {
-  vehiculos: { id: string; patente: string; marca: string; modelo: string }[];
+  vehiculos: Vehiculo[];
   empleados: { id: string; nombre: string; apellido: string }[];
   vehiculoIdPreseleccionado?: string;
   sessionEmpleadoId: string;
@@ -21,9 +30,18 @@ export default function NuevaCargaForm({ vehiculos, empleados, vehiculoIdPresele
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const [vehiculoId, setVehiculoId] = useState(vehiculoIdPreseleccionado ?? "");
   const [litros, setLitros] = useState("");
-  const [precio, setPrecio] = useState("");
-  const total = litros && precio ? (parseFloat(litros) * parseFloat(precio)).toFixed(2) : "—";
+  const [costoTotal, setCostoTotal] = useState("");
+
+  // Precio por litro calculado automáticamente a partir del total del ticket.
+  const litrosNum = parseFloat(litros);
+  const totalNum = parseFloat(costoTotal);
+  const precioPorLitro =
+    litrosNum > 0 && totalNum > 0 ? calcularPrecioPorLitro(totalNum, litrosNum) : null;
+
+  const vehiculoSel = vehiculos.find((v) => v.id === vehiculoId);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -63,11 +81,13 @@ export default function NuevaCargaForm({ vehiculos, empleados, vehiculoIdPresele
         {/* Vehículo */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium">Vehículo <span className="text-destructive">*</span></label>
-          <select name="vehiculoId" required defaultValue={vehiculoIdPreseleccionado ?? ""}
+          <select name="vehiculoId" required value={vehiculoId} onChange={(e) => setVehiculoId(e.target.value)}
             className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring">
             <option value="">Seleccioná un vehículo</option>
             {vehiculos.map((v) => (
-              <option key={v.id} value={v.id}>{v.patente} — {v.marca} {v.modelo}</option>
+              <option key={v.id} value={v.id}>
+                {v.patente} — {v.marca} {v.modelo} ({v.odometroActual.toLocaleString("es-AR")} km)
+              </option>
             ))}
           </select>
         </div>
@@ -88,8 +108,9 @@ export default function NuevaCargaForm({ vehiculos, empleados, vehiculoIdPresele
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Fecha <span className="text-destructive">*</span></label>
-            <input name="fecha" type="date" required defaultValue={hoy}
+            <input name="fecha" type="date" required defaultValue={hoy} max={hoy}
               className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring" />
+            <p className="text-xs text-muted-foreground">Podés elegir una fecha anterior para registrar cargas viejas.</p>
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Tipo <span className="text-destructive">*</span></label>
@@ -102,27 +123,29 @@ export default function NuevaCargaForm({ vehiculos, empleados, vehiculoIdPresele
           </div>
         </div>
 
-        {/* Litros + precio */}
+        {/* Litros + total del ticket */}
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Litros <span className="text-destructive">*</span></label>
-            <input name="litros" type="number" step="0.001" required placeholder="0.000"
+            <input name="litros" type="number" step="0.001" min="0.001" required placeholder="0.000"
               value={litros} onChange={(e) => setLitros(e.target.value)}
               className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring" />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Precio / litro <span className="text-destructive">*</span></label>
-            <input name="precioPorLitro" type="number" step="0.01" required placeholder="0.00"
-              value={precio} onChange={(e) => setPrecio(e.target.value)}
+            <label className="text-sm font-medium">Total del ticket <span className="text-destructive">*</span></label>
+            <input name="costoTotal" type="number" step="0.01" min="0.01" required placeholder="0.00"
+              value={costoTotal} onChange={(e) => setCostoTotal(e.target.value)}
               className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring" />
           </div>
         </div>
 
-        {/* Total calculado */}
-        {total !== "—" && (
+        {/* Precio por litro calculado automáticamente */}
+        {precioPorLitro !== null && (
           <div className="rounded-lg bg-muted/50 px-4 py-2.5 flex justify-between text-sm">
-            <span className="text-muted-foreground">Total calculado</span>
-            <span className="font-semibold">${parseFloat(total).toLocaleString("es-AR", { minimumFractionDigits: 2 })}</span>
+            <span className="text-muted-foreground">Precio por litro calculado</span>
+            <span className="font-semibold">
+              ${precioPorLitro.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / L
+            </span>
           </div>
         )}
 
@@ -130,8 +153,13 @@ export default function NuevaCargaForm({ vehiculos, empleados, vehiculoIdPresele
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Odómetro (km) <span className="text-destructive">*</span></label>
-            <input name="odometro" type="number" required placeholder="0"
+            <input name="odometro" type="number" min="0" required placeholder="0"
               className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring" />
+            {vehiculoSel && (
+              <p className="text-xs text-muted-foreground">
+                Último registrado: {vehiculoSel.odometroActual.toLocaleString("es-AR")} km
+              </p>
+            )}
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Estación</label>

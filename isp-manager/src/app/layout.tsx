@@ -8,14 +8,15 @@ export const metadata: Metadata = {
   description: "Sistema de gestión integral para empresa ISP",
 };
 
-// Script anti-flash: aplica el color de acento guardado antes de que React hidrate
+// Script anti-flash: aplica el color de acento guardado antes de que React hidrate,
+// evitando el parpadeo al color por defecto en cada carga.
 const accentScript = `
 (function(){
   try {
-    var accent = localStorage.getItem('accent-color');
-    if (accent && accent !== 'default') {
-      document.documentElement.setAttribute('data-accent', accent);
-    }
+    var hue = localStorage.getItem('accent-hue');
+    var chroma = localStorage.getItem('accent-chroma');
+    if (hue) document.documentElement.style.setProperty('--accent-hue', hue);
+    if (chroma) document.documentElement.style.setProperty('--accent-chroma', chroma);
   } catch(e){}
 })();
 `;

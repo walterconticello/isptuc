@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { checkPermission } from "@/lib/permissions";
-import { cuadrillaSchema } from "@/lib/validations";
+import { cuadrillaSchema, agregarMiembroSchema, removerMiembroSchema } from "@/lib/validations";
 import { Modulo, EstadoCuadrilla } from "@/generated/prisma/enums";
 
 type ActionResult<T = void> = { success: true; data: T } | { success: false; error: string };
@@ -108,6 +108,9 @@ export async function agregarMiembro(cuadrillaId: string, empleadoId: string, es
   const { session, error } = await guardCuadrillas();
   if (!session) return { success: false, error: error! };
 
+  const parsed = agregarMiembroSchema.safeParse({ cuadrillaId, empleadoId, esJefe });
+  if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
+
   const existe = await db.miembroCuadrilla.findUnique({
     where: { cuadrillaId_empleadoId: { cuadrillaId, empleadoId } },
   });
@@ -122,6 +125,9 @@ export async function agregarMiembro(cuadrillaId: string, empleadoId: string, es
 export async function removerMiembro(cuadrillaId: string, empleadoId: string): Promise<ActionResult> {
   const { session, error } = await guardCuadrillas();
   if (!session) return { success: false, error: error! };
+
+  const parsed = removerMiembroSchema.safeParse({ cuadrillaId, empleadoId });
+  if (!parsed.success) return { success: false, error: parsed.error.errors[0].message };
 
   await db.miembroCuadrilla.delete({
     where: { cuadrillaId_empleadoId: { cuadrillaId, empleadoId } },

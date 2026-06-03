@@ -31,7 +31,7 @@ export const loginSchema = z.object({
   password: z.string().min(1, "La contraseña es requerida"),
 });
 
-const tiposVehiculo = ["AUTO", "CAMIONETA", "MOTO", "FURGON"] as const;
+const tiposVehiculo = ["AUTO", "CAMIONETA", "MOTO", "FURGON", "EQUIPO", "OTRO"] as const;
 const estadosVehiculo = ["ACTIVO", "MANTENIMIENTO", "INACTIVO"] as const;
 const tiposCombustible = ["NAFTA", "DIESEL", "GNC", "PREMIUM"] as const;
 
@@ -52,7 +52,7 @@ export const combustibleSchema = z.object({
   empleadoId: z.string().min(1, "Seleccioná un empleado"),
   fecha: z.string().min(1, "La fecha es requerida"),
   litros: z.coerce.number().positive("Los litros deben ser positivos"),
-  precioPorLitro: z.coerce.number().positive("El precio debe ser positivo"),
+  costoTotal: z.coerce.number().positive("El total del ticket debe ser positivo"),
   odometro: z.coerce.number().min(0, "El odómetro no puede ser negativo"),
   tipoCombustible: z.enum(tiposCombustible, { message: "Tipo de combustible inválido" }),
   estacion: z.string().optional(),
@@ -63,6 +63,35 @@ export const cuadrillaSchema = z.object({
   nombre: z.string().min(1, "El nombre es requerido"),
   descripcion: z.string().optional(),
 });
+
+export const agregarMiembroSchema = z.object({
+  cuadrillaId: z.string().min(1, "Cuadrilla inválida"),
+  empleadoId: z.string().min(1, "Empleado inválido"),
+  esJefe: z.boolean().default(false),
+});
+
+export const removerMiembroSchema = z.object({
+  cuadrillaId: z.string().min(1, "Cuadrilla inválida"),
+  empleadoId: z.string().min(1, "Empleado inválido"),
+});
+
+// Tope de filas por página para evitar consultas desmesuradas (DoS) o skip negativo.
+export const PAGE_SIZE_MAX = 100;
+
+/**
+ * Acota los parámetros de paginación: page mínimo 1, pageSize entre 1 y
+ * PAGE_SIZE_MAX. Valores inválidos o ausentes caen al default del endpoint.
+ * Cierra el hallazgo V3.
+ */
+export function normalizarPaginacion(
+  page?: number,
+  pageSize?: number,
+  pageSizePorDefecto = 20
+): { page: number; pageSize: number } {
+  const pageOk = z.coerce.number().int().min(1).catch(1).parse(page);
+  const sizeOk = z.coerce.number().int().min(1).catch(pageSizePorDefecto).parse(pageSize);
+  return { page: pageOk, pageSize: Math.min(sizeOk, PAGE_SIZE_MAX) };
+}
 
 export type CrearEmpleadoInput = z.infer<typeof crearEmpleadoSchema>;
 export type EditarEmpleadoInput = z.infer<typeof editarEmpleadoSchema>;

@@ -6,7 +6,6 @@ import { Header } from "@/components/layout/header";
 import { ThemeSelector } from "@/components/theme-selector";
 import { LogOut } from "lucide-react";
 import { signOut } from "@/lib/auth";
-import { db } from "@/lib/db";
 
 export default async function DashboardLayout({
   children,
@@ -16,10 +15,9 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const [modulosHabilitados, empresa] = await Promise.all([
-    getPermisosEmpleado(session.user.id).then((s) => Array.from(s)),
-    db.empresa.findFirst({ select: { nombre: true } }),
-  ]);
+  const modulosHabilitados = Array.from(
+    await getPermisosEmpleado(session.user.id),
+  );
 
   const { nombre, apellido, rol } = session.user as {
     nombre: string;
@@ -27,16 +25,21 @@ export default async function DashboardLayout({
     rol: string;
   };
 
+  const initials = `${nombre?.[0] ?? ""}${apellido?.[0] ?? ""}`.toUpperCase();
+
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar desktop (oculto en mobile) */}
-      <aside className="hidden md:flex md:w-60 md:flex-col md:border-r md:bg-sidebar">
+      {/* Sidebar desktop */}
+      <aside className="hidden md:flex md:w-60 md:flex-col border-r border-white/[0.07] bg-[#0f172a]">
         {/* Logo */}
-        <div className="flex h-14 items-center gap-2 border-b px-4">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
-            ISP
-          </div>
-          <span className="font-semibold truncate">{empresa?.nombre ?? "ISP Manager"}</span>
+        <div className="flex h-14 items-center border-b border-white/[0.07] px-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo_isp_v2.png"
+            alt="ISP Tucumán"
+            className="h-8 w-auto"
+            style={{ filter: "invert(1) hue-rotate(180deg) brightness(1.05)" }}
+          />
         </div>
 
         {/* Nav */}
@@ -48,32 +51,40 @@ export default async function DashboardLayout({
         <ThemeSelector />
 
         {/* Usuario + logout */}
-        <div className="border-t p-4">
-          <p className="text-sm font-medium">{nombre} {apellido}</p>
-          <p className="text-xs text-muted-foreground mb-3">{rol}</p>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-          >
-            <button
-              type="submit"
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+        <div className="border-t border-white/[0.07] p-3">
+          <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-white/5 transition-colors group">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-indigo-400 text-xs font-bold text-white">
+              {initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white/85 truncate">{nombre} {apellido}</p>
+              <p className="text-xs text-white/35">{rol}</p>
+            </div>
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/login" });
+              }}
             >
-              <LogOut className="h-4 w-4" />
-              Cerrar sesión
-            </button>
-          </form>
+              <button
+                type="submit"
+                className="text-white/25 hover:text-white/70 transition-colors cursor-pointer"
+                aria-label="Cerrar sesión"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </form>
+          </div>
         </div>
       </aside>
 
-      {/* Contenido principal */}
-      <div className="flex flex-1 flex-col">
+      {/* Contenido principal — min-w-0 evita que el contenido ancho (tablas,
+          calendario) desborde el layout flex en pantallas chicas. */}
+      <div className="flex flex-1 flex-col min-w-0">
         {/* Header mobile */}
         <Header session={session} modulosHabilitados={modulosHabilitados} />
 
-        <main className="flex-1 overflow-auto p-4 md:p-6">
+        <main className="min-w-0 flex-1 overflow-auto p-4 md:p-6">
           {children}
         </main>
       </div>

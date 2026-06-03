@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 
 export type AuditAccion =
   // Auth
-  | "LOGIN_EXITOSO" | "LOGIN_FALLIDO" | "LOGOUT"
+  | "LOGIN_EXITOSO" | "LOGIN_FALLIDO" | "LOGIN_BLOQUEADO" | "LOGOUT"
   // Empleados
   | "CREAR_EMPLEADO" | "EDITAR_EMPLEADO" | "ACTIVAR_EMPLEADO" | "DESACTIVAR_EMPLEADO"
   // Flota
@@ -13,7 +13,7 @@ export type AuditAccion =
   | "CREAR_CUADRILLA" | "EDITAR_CUADRILLA" | "ACTIVAR_CUADRILLA" | "DESACTIVAR_CUADRILLA"
   | "AGREGAR_MIEMBRO_CUADRILLA" | "REMOVER_MIEMBRO_CUADRILLA"
   // Presupuestos
-  | "CREAR_PRESUPUESTO" | "CAMBIAR_ESTADO_PRESUPUESTO"
+  | "CREAR_PRESUPUESTO" | "EDITAR_PRESUPUESTO" | "CAMBIAR_ESTADO_PRESUPUESTO"
   // Clientes
   | "CREAR_CLIENTE" | "EDITAR_CLIENTE"
   // Items
@@ -51,14 +51,17 @@ export async function logAudit(params: LogParams): Promise<void> {
         detalles: params.detalles ? (params.detalles as import("@/generated/prisma/client").Prisma.InputJsonValue) : undefined,
       },
     });
-  } catch {
-    // El log de auditoría nunca debe romper la operación principal
+  } catch (err) {
+    // El log de auditoría nunca debe romper la operación principal, pero su
+    // fallo tampoco debe quedar invisible.
+    console.error("[audit] no se pudo registrar la acción", err);
   }
 }
 
 export const ACCION_LABEL: Record<AuditAccion, string> = {
   LOGIN_EXITOSO:              "Inicio de sesión",
   LOGIN_FALLIDO:              "Intento de login fallido",
+  LOGIN_BLOQUEADO:            "Login bloqueado por intentos",
   LOGOUT:                     "Cierre de sesión",
   CREAR_EMPLEADO:             "Crear empleado",
   EDITAR_EMPLEADO:            "Editar empleado",
@@ -74,6 +77,7 @@ export const ACCION_LABEL: Record<AuditAccion, string> = {
   AGREGAR_MIEMBRO_CUADRILLA:  "Agregar miembro a cuadrilla",
   REMOVER_MIEMBRO_CUADRILLA:  "Remover miembro de cuadrilla",
   CREAR_PRESUPUESTO:          "Crear presupuesto",
+  EDITAR_PRESUPUESTO:         "Editar presupuesto",
   CAMBIAR_ESTADO_PRESUPUESTO: "Cambiar estado de presupuesto",
   CREAR_CLIENTE:              "Crear cliente",
   EDITAR_CLIENTE:             "Editar cliente",

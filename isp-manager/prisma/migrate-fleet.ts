@@ -194,7 +194,11 @@ async function main() {
         costoTotal: fl.totalCost,
         odometro: fl.odometerReading,
         kmDesdeUltimo: fl.kmSinceLast,
-        consumo: fl.consumptionRate,
+        // fleet guarda consumptionRate en km/L; isp usa L/100km → recalcular.
+        consumo:
+          fl.kmSinceLast && fl.kmSinceLast > 0
+            ? (fl.liters * 100) / fl.kmSinceLast
+            : null,
         tipoCombustible: TIPO_COMBUSTIBLE[fl.fuelType] ?? TipoCombustible.NAFTA,
         estacion: fl.stationName,
         notas: fl.notes,

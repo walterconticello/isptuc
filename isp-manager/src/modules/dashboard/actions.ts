@@ -2,10 +2,15 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { checkPermission } from "@/lib/permissions";
+import { Modulo } from "@/generated/prisma/enums";
 
 export async function getDashboardData() {
   const session = await auth();
   if (!session?.user?.id) return { success: false as const, error: "No autenticado" };
+
+  const ok = await checkPermission(session.user.id, Modulo.DASHBOARD);
+  if (!ok) return { success: false as const, error: "Sin permisos" };
 
   const ahora = new Date();
   const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);

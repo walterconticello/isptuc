@@ -28,7 +28,7 @@ export const NAV_ITEMS: NavItem[] = [
   { modulo: "CUADRILLAS",   label: "Cuadrillas",   href: "/cuadrillas",    icon: HardHat         },
   { modulo: "PRESUPUESTOS", label: "Presupuestos", href: "/presupuestos",  icon: FileText        },
   { modulo: "CLIENTES",     label: "Clientes",     href: "/clientes",      icon: UserCheck       },
-  { modulo: "ITEMS",        label: "Items",        href: "/items",         icon: Package         },
+  { modulo: "ITEMS",        label: "Items facturables", href: "/items",    icon: Package         },
   { modulo: "STOCK",        label: "Stock",        href: "/stock",         icon: Warehouse       },
   { modulo: "ADMIN",        label: "Administración", href: "/admin",       icon: Settings        },
 ];
