@@ -15,84 +15,92 @@ Antes de cada cambio se genera un mockup HTML comparativo (estado actual vs. pro
 
 ### 1. Login — Rediseño completo
 **Fecha:** 2026-06-01
-**Archivos modificados:**
-- `isp-manager/src/app/(auth)/login/page.tsx`
-- `isp-manager/src/app/globals.css`
-- `isp-manager/public/logo_isp_v2.png` _(nuevo)_
+**Archivos:** `login/page.tsx` · `globals.css` · `public/logo_isp_v2.png`
 
-**Qué cambió:**
-- Fondo estático gris → carrusel de 4 imágenes de data centers con crossfade 1.6s + dots navegables
-- Overlay oscuro con gradiente sobre el carrusel
-- Formulario flotante → card glassmorphism centrada (`backdrop-blur: 20px`, fondo `rgba(10,15,35,0.80)`)
-- Logo genérico → logo real ISP Tucumán con `filter: invert(1) hue-rotate(180deg)` para eliminar fondo blanco
-- Avatar dinámico: ícono por defecto → iniciales en dorado al detectar email válido
-- Campo email se resalta en dorado con formato válido
-- Tipografía Inter → Plus Jakarta Sans
-- Botón "INGRESAR" con gradiente dorado/amber, sombra y elevación en hover
-- Campo contraseña con toggle mostrar/ocultar
-- Footer "© 2026 ISP Tucumán — Uso interno exclusivo"
-- Plus Jakarta Sans agregado a `globals.css`
+- Carrusel de 4 imágenes de data centers con crossfade 1.6s + dots navegables
+- Card glassmorphism centrada (`backdrop-blur: 20px`)
+- Logo real ISP Tucumán con `filter: invert(1) hue-rotate(180deg)`
+- Avatar dinámico: iniciales en dorado al detectar email válido
+- Toggle mostrar/ocultar contraseña
+- Botón "INGRESAR" con gradiente dorado, sombra y elevación en hover
+- Tipografía Plus Jakarta Sans
 
 ---
 
-### 2. Sidebar — Rediseño dark + logo real + módulos agrupados
+### 2. Sidebar + Header mobile — Rediseño dark
 **Fecha:** 2026-06-02
-**Archivos modificados:**
-- `isp-manager/src/app/(dashboard)/layout.tsx`
-- `isp-manager/src/components/layout/sidebar-content.tsx`
-- `isp-manager/src/components/layout/header.tsx`
-- `isp-manager/public/logo_isp_v2.png` _(reemplaza logo_isp.jpeg)_
+**Archivos:** `layout.tsx` · `sidebar-content.tsx` · `header.tsx` · `public/logo_isp_v2.png`
 
-**Qué cambió:**
-- Fondo del sidebar: blanco genérico → `#0f172a` oscuro permanente
-- Logo: cuadrado azul "ISP" → logo real con filtro CSS
-- Módulos agrupados en 4 categorías: General / Operaciones / Gestión comercial / Sistema
-- Ítem activo: fondo sólido → barra indigo lateral (3px) + fondo sutil + texto `text-indigo-300`
-- Footer: nombre+rol plano → avatar con iniciales + gradiente indigo + botón logout
-- Header mobile: texto "ISP Manager" → logo real centrado, fondo oscuro
-- Drawer mobile: mismo estilo oscuro, avatar en footer, botón X para cerrar
+- Fondo `#0f172a` oscuro permanente
+- Logo real con filtro CSS
+- Módulos agrupados: General / Operaciones / Gestión comercial / Sistema
+- Ítem activo: barra indigo lateral (3px) + fondo sutil
+- Footer: avatar con iniciales + gradiente indigo + logout
+- Header mobile: logo real centrado, drawer oscuro con botón X
 
 ---
 
-### 3. Dashboard — KPI cards renovadas + alertas + actividad
+### 3. Dashboard — KPI cards renovadas
 **Fecha:** 2026-06-02
-**Archivos modificados:**
-- `isp-manager/src/app/(dashboard)/dashboard/page.tsx`
+**Archivos:** `dashboard/page.tsx`
 
-**Qué cambió:**
-- KPI cards con color único por módulo + borde superior 3px colorido + ícono con fondo coloreado
-- Mini sparklines (7 barras) en las 4 cards principales
+- Color único por módulo + borde superior 3px por card
+- Mini sparklines (7 barras) en cards principales
 - Trend pills con ícono y porcentaje
-- Hover con elevación `hover:-translate-y-0.5` + sombra
-- Alertas: pills pequeñas → banners de ancho completo con subtítulo y flecha
-- Actividad: tags de color por tipo + actor + tiempo con separadores · + enlace "Ver todo →"
-- Label de KPI en uppercase con tracking para mayor jerarquía
+- Alertas: banners de ancho completo con subtítulo
+- Actividad: tags de color + actor + tiempo con separadores
 
 ---
 
 ### 4. Empleados — Tabla renovada
 **Fecha:** 2026-06-03
-**Archivos modificados:**
-- `isp-manager/src/app/(dashboard)/empleados/page.tsx`
+**Archivos:** `empleados/page.tsx`
 
-**Qué cambió:**
-- Avatar con iniciales generadas de apellido+nombre, gradiente de color por rol (violeta/azul/naranja/verde/slate)
-- Columnas Nombre + Email unificadas en una sola celda con avatar — de 5 a 4 columnas
-- Buscador funcional por nombre/email via URL searchParam `?q=`
-- Headers de tabla en uppercase con letter-spacing — jerarquía visual clara
-- Acciones "Ver" / "Editar" (links de texto) → botones icono 32px con hover indigo
-- Estado: badge pill → dot de color con halo + texto (verde/rojo)
-- Filas de empleados inactivos con `opacity-60` — distinguibles sin eliminarlos
-- Header de página con breadcrumb "Operaciones › Empleados" y contadores (total · activos · inactivos)
-- Botón "Nuevo empleado" con `rounded-xl`, sombra y elevación en hover
-- Mobile cards actualizadas con avatar + mismo sistema de botones icono
+- Avatar con iniciales + gradiente de color por rol
+- Nombre + email en una celda con avatar (de 5 a 4 columnas)
+- Buscador funcional via `?q=` por nombre/email
+- Headers en uppercase con tracking
+- Acciones como botones icono (ojo + lápiz)
+- Estado con dot de color + halo
+- Filas inactivas con `opacity-60`
+- Breadcrumb + contadores en el header
+
+---
+
+### 5. Flota — Tabla renovada
+**Fecha:** 2026-06-03
+**Archivos:** `flota/page.tsx`
+
+- Ícono SVG por tipo de vehículo (Car/Truck/Bike) con fondo ámbar
+- Patente como badge monoespaciado destacado
+- De 7 a 5 columnas (vehículo + patente + tipo unificados)
+- Estado con dot de color + halo (verde/ámbar/rojo)
+- Odómetro con barra de progreso relativa al máximo de la flota
+  - < 50%: ámbar · 50-80%: naranja · > 80%: rojo
+- Cuadrilla como tag con color primario
+- Buscador funcional via `?q=` por patente/marca/modelo
+- Inactivos opacity 50%, en mantenimiento opacity 70%
+- Acciones como botones icono (ojo + lápiz)
+
+---
+
+### 6. Clientes — Tabla renovada
+**Fecha:** 2026-06-03
+**Archivos:** `clientes/page.tsx`
+
+- Avatar circular con iniciales de las primeras 2 palabras del nombre
+- Color del avatar generado por hash del nombre (7 paletas rotativas)
+- De 5 a 4 columnas (teléfono + email consolidados en "Contacto")
+- CUIT en columna propia en monoespaciado
+- Datos faltantes en gris muy suave en lugar de "—" invasivo
+- Buscador funcional via `?q=` por nombre/CUIT/email
+- Dos acciones: Ver presupuestos (FileText) + Editar (Pencil)
+- Breadcrumb "Gestión comercial › Clientes"
 
 ---
 
 ## Pendiente
 
-- [ ] Flota — tabla con mismo sistema visual que empleados
-- [ ] Clientes — tabla consistente
 - [ ] Formularios — inputs, selects, validación visual
 - [ ] Módulo presupuestos — editor visual
 - [ ] Módulo stock — dashboard de almacenes
