@@ -23,20 +23,15 @@ Antes de cada cambio se genera un mockup HTML comparativo (estado actual vs. pro
 **Qué cambió:**
 - Fondo estático gris → carrusel de 4 imágenes de data centers con crossfade 1.6s + dots navegables
 - Overlay oscuro con gradiente sobre el carrusel
-- Formulario flotante sin contención → card glassmorphism centrada (`backdrop-blur: 20px`, fondo `rgba(10,15,35,0.80)`)
-- Logo genérico "ISP" → logo real ISP Tucumán (`logo_isp_v2.png`) con `filter: invert(1) hue-rotate(180deg)` para eliminar fondo blanco sobre oscuro
-- Avatar dinámico: ícono de usuario por defecto → iniciales del usuario en dorado al detectar email válido
-- Campo email se resalta en dorado cuando el formato es válido
+- Formulario flotante → card glassmorphism centrada (`backdrop-blur: 20px`, fondo `rgba(10,15,35,0.80)`)
+- Logo genérico → logo real ISP Tucumán con `filter: invert(1) hue-rotate(180deg)` para eliminar fondo blanco
+- Avatar dinámico: ícono por defecto → iniciales en dorado al detectar email válido
+- Campo email se resalta en dorado con formato válido
 - Tipografía Inter → Plus Jakarta Sans
 - Botón "INGRESAR" con gradiente dorado/amber, sombra y elevación en hover
-- Campo contraseña con toggle mostrar/ocultar (ojo)
-- Footer con "© 2026 ISP Tucumán — Uso interno exclusivo"
-- Import de Plus Jakarta Sans agregado a `globals.css`
-
-**Qué NO cambió:**
-- Lógica de autenticación (`signIn`, `loginSchema`, manejo de errores)
-- Rutas y redirecciones
-- Integración con NextAuth
+- Campo contraseña con toggle mostrar/ocultar
+- Footer "© 2026 ISP Tucumán — Uso interno exclusivo"
+- Plus Jakarta Sans agregado a `globals.css`
 
 ---
 
@@ -49,19 +44,13 @@ Antes de cada cambio se genera un mockup HTML comparativo (estado actual vs. pro
 - `isp-manager/public/logo_isp_v2.png` _(reemplaza logo_isp.jpeg)_
 
 **Qué cambió:**
-- Fondo del sidebar: blanco genérico → `#0f172a` oscuro permanente (coherente con el login)
-- Logo: cuadrado azul "ISP" → logo real ISP Tucumán con filtro CSS
-- Módulos agrupados en 4 categorías: **General / Operaciones / Gestión comercial / Sistema**
-- Ítem activo: fondo azul sólido → barra indigo lateral (3px) + fondo sutil `bg-primary/15` + texto `text-indigo-300`
-- Íconos inactivos en `text-white/30`, activos en `text-indigo-400`
-- Footer de usuario: nombre + rol plano → avatar con iniciales generadas del nombre real + gradiente indigo + botón logout
-- Header mobile: texto "ISP Manager" → logo real centrado, fondo oscuro `#0f172a`
-- Drawer mobile: mismo estilo oscuro, avatar en footer, botón X para cerrar (ícono `X` de Lucide)
-
-**Qué NO cambió:**
-- Sistema de permisos RBAC (los módulos siguen filtrándose por rol)
-- Lógica de autenticación y signOut
-- ThemeSelector (se conserva)
+- Fondo del sidebar: blanco genérico → `#0f172a` oscuro permanente
+- Logo: cuadrado azul "ISP" → logo real con filtro CSS
+- Módulos agrupados en 4 categorías: General / Operaciones / Gestión comercial / Sistema
+- Ítem activo: fondo sólido → barra indigo lateral (3px) + fondo sutil + texto `text-indigo-300`
+- Footer: nombre+rol plano → avatar con iniciales + gradiente indigo + botón logout
+- Header mobile: texto "ISP Manager" → logo real centrado, fondo oscuro
+- Drawer mobile: mismo estilo oscuro, avatar en footer, botón X para cerrar
 
 ---
 
@@ -71,27 +60,39 @@ Antes de cada cambio se genera un mockup HTML comparativo (estado actual vs. pro
 - `isp-manager/src/app/(dashboard)/dashboard/page.tsx`
 
 **Qué cambió:**
-- **KPI cards:** color único por módulo con borde superior de 3px e ícono con fondo coloreado
-  - Empleados → azul | Flota → ámbar | Combustible → naranja | Presupuestos → verde
-  - Cuadrillas → violeta | Stock → rojo | Herramientas → indigo
-- **Mini sparklines:** 7 barras de tendencia en las 4 cards principales — la última barra opaca al 80%, las anteriores al 20%
-- **Trend pills:** badge pequeño con ícono y porcentaje (rojo si subió el gasto, verde si bajó, ámbar si hay advertencia)
-- **Hover con elevación:** cards suben 2px con `hover:-translate-y-0.5` y sombra suave
-- **Alertas en banner:** ancho completo con título + subtítulo descriptivo + flecha de navegación (reemplaza las pills pequeñas)
-- **Actividad reciente:** tags de color por tipo (combustible/presupuesto/stock) + actor + tiempo separados por puntos · enlace "Ver todo →"
-- Label de KPI en mayúsculas con `uppercase tracking-wide` para estilo más profesional
-- Valor principal más grande: `text-3xl font-bold` en cards principales
+- KPI cards con color único por módulo + borde superior 3px colorido + ícono con fondo coloreado
+- Mini sparklines (7 barras) en las 4 cards principales
+- Trend pills con ícono y porcentaje
+- Hover con elevación `hover:-translate-y-0.5` + sombra
+- Alertas: pills pequeñas → banners de ancho completo con subtítulo y flecha
+- Actividad: tags de color por tipo + actor + tiempo con separadores · + enlace "Ver todo →"
+- Label de KPI en uppercase con tracking para mayor jerarquía
 
-**Qué NO cambió:**
-- Lógica de `getDashboardData()` y sus server actions
-- Estructura de datos (empleados, vehiculos, cuadrillas, combustible, presupuestos, stockBajoCount, etc.)
-- Autenticación y redirección
+---
+
+### 4. Empleados — Tabla renovada
+**Fecha:** 2026-06-03
+**Archivos modificados:**
+- `isp-manager/src/app/(dashboard)/empleados/page.tsx`
+
+**Qué cambió:**
+- Avatar con iniciales generadas de apellido+nombre, gradiente de color por rol (violeta/azul/naranja/verde/slate)
+- Columnas Nombre + Email unificadas en una sola celda con avatar — de 5 a 4 columnas
+- Buscador funcional por nombre/email via URL searchParam `?q=`
+- Headers de tabla en uppercase con letter-spacing — jerarquía visual clara
+- Acciones "Ver" / "Editar" (links de texto) → botones icono 32px con hover indigo
+- Estado: badge pill → dot de color con halo + texto (verde/rojo)
+- Filas de empleados inactivos con `opacity-60` — distinguibles sin eliminarlos
+- Header de página con breadcrumb "Operaciones › Empleados" y contadores (total · activos · inactivos)
+- Botón "Nuevo empleado" con `rounded-xl`, sombra y elevación en hover
+- Mobile cards actualizadas con avatar + mismo sistema de botones icono
 
 ---
 
 ## Pendiente
 
-- [ ] Tablas generales — empleados, flota, clientes (estilos consistentes)
+- [ ] Flota — tabla con mismo sistema visual que empleados
+- [ ] Clientes — tabla consistente
 - [ ] Formularios — inputs, selects, validación visual
 - [ ] Módulo presupuestos — editor visual
 - [ ] Módulo stock — dashboard de almacenes
