@@ -8,6 +8,7 @@ import {
   UserCheck,
   Package,
   Warehouse,
+  Radio,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -30,5 +31,6 @@ export const NAV_ITEMS: NavItem[] = [
   { modulo: "CLIENTES",     label: "Clientes",     href: "/clientes",      icon: UserCheck       },
   { modulo: "ITEMS",        label: "Items facturables", href: "/items",    icon: Package         },
   { modulo: "STOCK",        label: "Stock",        href: "/stock",         icon: Warehouse       },
+  { modulo: "RED",          label: "Red",          href: "/red",           icon: Radio           },
   { modulo: "ADMIN",        label: "Administración", href: "/admin",       icon: Settings        },
 ];

@@ -18,6 +18,7 @@ const MODULO_LABEL: Record<Modulo, string> = {
   CLIENTES:     "Clientes",
   ITEMS:        "Items",
   STOCK:        "Stock",
+  RED:          "Red",
   ADMIN:        "Administración",
 };
 
