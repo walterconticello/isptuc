@@ -44,6 +44,7 @@ enum Modulo {
   CLIENTES
   ITEMS
   STOCK
+  RED
   ADMIN
 }
 
@@ -98,6 +99,13 @@ enum TipoMovimiento {
   TRANSFERENCIA
 }
 
+// Cómo se obtienen los datos de potencia de una OLT (fuente enchufable).
+enum FuenteOlt {
+  PANEL   // panel web que ya scrapea la OLT (ej. El Mollar, /ajax/data/arrays.txt)
+  SNMP    // consulta SNMP directa a la OLT
+  TELNET  // CLI por telnet/SSH
+}
+
 // ─── Core ────────────────────────────────────────────────────────────────────
 
 model Empresa {
@@ -131,6 +139,7 @@ model Empleado {
   almacenesACargo       Almacen[]
   movimientosStock      MovimientoStock[]
   auditLogs             AuditLog[]
+  registrosConfiguracion RegistroConfiguracion[]
 }
 
 model PermisoModulo {
@@ -362,4 +371,84 @@ model AsignacionHerramienta {
 
   producto Producto @relation(fields: [productoId], references: [id])
   empleado Empleado @relation(fields: [empleadoId], references: [id])
+}
+
+// ─── Red / FTTH (OLTs, ONUs, potencias, configuraciones) ───────────────────────
+
+// Una OLT de la red. La potencia de sus ONUs se obtiene según `tipoFuente`
+// (hoy PANEL para El Mollar; SNMP/TELNET para las demás a futuro).
+model Olt {
+  id         String    @id @default(cuid())
+  nombre     String
+  sucursal   String?
+  ipGestion  String?
+  vendor     String?
+  tipoFuente FuenteOlt @default(PANEL)
+  activa     Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  onus Onu[]
+}
+
+// Una ONU/ONT leída de una OLT. `publicIdWispro` cruza con ContratoWispro.
+model Onu {
+  id             String   @id @default(cuid())
+  oltId          String
+  pon            String?
+  idOnu          String?
+  serial         String?
+  ip             String?
+  potenciaDbm    Decimal? @db.Decimal(6, 2)
+  estado         String?
+  vlan           String?
+  pppoeUser      String?
+  publicIdWispro Int?
+  leidoEn        DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  olt Olt @relation(fields: [oltId], references: [id], onDelete: Cascade)
+
+  @@unique([oltId, pon, idOnu])
+  @@index([oltId])
+  @@index([publicIdWispro])
+  @@index([serial])
+}
+
+// Cache local de contratos de WisPro (evita pegarle a la API en cada carga).
+model ContratoWispro {
+  id             String   @id @default(cuid())
+  publicId       Int      @unique
+  nombreCliente  String?
+  direccion      String?
+  plan           String?
+  estado         String?
+  ip             String?
+  pppoeUsername  String?
+  sincronizadoEn DateTime @default(now())
+
+  @@index([nombreCliente])
+}
+
+// Registro de cada configuración de equipo hecha por vsol-config (auditoría
+// de "quién configura qué"). Complementa al AuditLog con detalle por ONU/cliente.
+model RegistroConfiguracion {
+  id             String   @id @default(cuid())
+  empleadoId     String?
+  tecnicoNombre  String?
+  publicIdWispro Int?
+  serialOnu      String?
+  marca          String?
+  accion         String
+  parametros     Json?
+  resultado      String?
+  origen         String   @default("vsol-config")
+  createdAt      DateTime @default(now())
+
+  empleado Empleado? @relation(fields: [empleadoId], references: [id])
+
+  @@index([empleadoId])
+  @@index([publicIdWispro])
+  @@index([createdAt])
 }

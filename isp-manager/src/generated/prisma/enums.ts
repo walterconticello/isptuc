@@ -30,6 +30,7 @@ export const Modulo = {
   CLIENTES: 'CLIENTES',
   ITEMS: 'ITEMS',
   STOCK: 'STOCK',
+  RED: 'RED',
   ADMIN: 'ADMIN'
 } as const
 
@@ -106,3 +107,12 @@ export const TipoMovimiento = {
 } as const
 
 export type TipoMovimiento = (typeof TipoMovimiento)[keyof typeof TipoMovimiento]
+
+
+export const FuenteOlt = {
+  PANEL: 'PANEL',
+  SNMP: 'SNMP',
+  TELNET: 'TELNET'
+} as const
+
+export type FuenteOlt = (typeof FuenteOlt)[keyof typeof FuenteOlt]

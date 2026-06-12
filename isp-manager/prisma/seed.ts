@@ -21,6 +21,7 @@ const PERMISOS_DEFAULT: Record<Modulo, Record<Rol, boolean>> = {
   CLIENTES:     { DUENO: true,  GERENTE: true,  ADMIN: true,  ADMINISTRATIVO: true,  TECNICO: false },
   ITEMS:        { DUENO: true,  GERENTE: true,  ADMIN: true,  ADMINISTRATIVO: true,  TECNICO: false },
   STOCK:        { DUENO: true,  GERENTE: true,  ADMIN: true,  ADMINISTRATIVO: true,  TECNICO: true  },
+  RED:          { DUENO: true,  GERENTE: true,  ADMIN: true,  ADMINISTRATIVO: false, TECNICO: true  },
   ADMIN:        { DUENO: true,  GERENTE: false, ADMIN: true,  ADMINISTRATIVO: false, TECNICO: false },
 };
 

@@ -12,7 +12,7 @@ interface SidebarContentProps {
 
 const GROUPS: { label: string; modulos: Modulo[] }[] = [
   { label: "General",            modulos: ["DASHBOARD"] },
-  { label: "Operaciones",        modulos: ["EMPLEADOS", "FLOTA", "COMBUSTIBLE", "CUADRILLAS"] },
+  { label: "Operaciones",        modulos: ["EMPLEADOS", "FLOTA", "COMBUSTIBLE", "CUADRILLAS", "RED"] },
   { label: "Gestión comercial",  modulos: ["PRESUPUESTOS", "CLIENTES", "ITEMS", "STOCK"] },
   { label: "Sistema",            modulos: ["ADMIN"] },
 ];

@@ -305,3 +305,45 @@ export async function createEmpleado(data: unknown) {
 - Tablas de listas → en mobile renderizar como cards (usar `hidden md:table` / `md:hidden`)
 - Formularios → stack vertical, campos full-width en mobile
 - Sidebar → Sheet (drawer) en mobile, sidebar fijo en desktop
+
+---
+
+# Fase RED — Módulo FTTH / ONUs (potencias + WisPro + auditoría de config)
+
+> Basado en `docs/SPEC-red.md` (defaults confirmados). Rama: `feat/modulo-red`.
+> Implementación directa siguiendo skills + ui-ux-pro-max.
+
+## Grafo de dependencias
+```
+T0 setup (rama + .env + .env.example)
+  └─ T1 datos base (schema + migración --create-only + seed RED + audit RED)
+       ├─ T2 lógica pura (potencia.ts, parse-arrays.ts) + tests   [paralelizable]
+       ├─ T3 WisPro (cliente + sync-contratos → cache ContratoWispro)
+       ├─ T4 fuente PANEL (tipos.ts + panel.ts usa parse-arrays)
+       │    └─ T5 server actions (getOnus/getOnuById/sincronizarOnus/getResumenRed)
+       │         ├─ T6 UI /red (tabla+semáforo+?q=+filtros+orden)  └─ T8 sidebar
+       │         └─ T7 UI /red/[id] detalle (+ historial RegistroConfiguracion)
+       └─ T9 API /api/red/configuracion (bearer, reporte de vsol-config)
+              └─ T10 verificación (typecheck+lint+test)
+```
+
+## Tareas (cada una slice vertical donde aplica)
+- **T0** rama + `.env` (secretos reales incl. API key WisPro) + `.env.example` (placeholders); `.gitignore` cubre `.env`. *Verif:* `.env` no aparece en `git status`.
+- **T1** schema: `Modulo.RED`, `enum FuenteOlt{PANEL,SNMP,TELNET}`, modelos `Olt/Onu/ContratoWispro/RegistroConfiguracion`; migración `--create-only` (NO aplicar); seed `RED` en `PERMISOS_DEFAULT` (DUENO/GERENTE/ADMIN/TECNICO=true, ADMINISTRATIVO=false); `audit.ts` módulo `RED` + acciones `SYNC_ONUS`/`CONFIGURAR_ONU`. *Verif:* typecheck ok, migración generada, client incluye `Onu`.
+- **T2** `modules/red/potencia.ts` (`clasificarSenal`) + `fuentes/parse-arrays.ts` (`parseArrays`) + tests Vitest. *Verif:* `npm test` verde.
+- **T3** `wispro/cliente.ts` (header Authorization, paginado) + `sync-contratos.ts` (upsert por `publicId`).
+- **T4** `fuentes/tipos.ts` (interfaz `FuenteDatos`) + `fuentes/panel.ts` (login `/login.php` + `arrays.txt`).
+- **T5** `actions.ts`: `guardRed`, `getOnus({q,oltId,estado})` (join cache + orden peor-señal), `getOnuById`, `sincronizarOnus(oltId)` (+`logAudit SYNC_ONUS`), `getResumenRed`.
+- **T6** `/red/page.tsx` + `_components` (tabla, badge semáforo, `?q=`, filtros, botón Sincronizar). Estilo `MEJORAS_VISUALES.md`.
+- **T7** `/red/[id]/page.tsx` (cliente+ONU+historial de config).
+- **T8** `nav-items.ts`: ítem `RED` ("Red", `/red`).
+- **T9** `/api/red/configuracion/route.ts` (POST, bearer `VSOL_REPORT_TOKEN`, Zod, crea `RegistroConfiguracion` + `logAudit CONFIGURAR_ONU`).
+- **T10** `typecheck + lint + test`.
+
+## Checkpoints
+1. tras **T1** (revisar schema antes de migrar). 2. tras **T2** (lógica pura verde). 3. tras **T6** (mockup ui-ux-pro-max antes de la UI). 4. **T10** final.
+
+## Riesgos
+- `prisma migrate dev --create-only` puede requerir DB arriba + `npm install`. Si no, generar SQL con `prisma migrate diff` o dejar schema + instrucción. **Nunca aplicar** la migración.
+- typecheck/test requieren `npm install` (documentar si falta).
+- `/api/red/configuracion` = excepción justificada a "API solo NextAuth" (cliente de escritorio).

@@ -68,7 +68,11 @@ export const ModelName = {
   Producto: 'Producto',
   StockProducto: 'StockProducto',
   MovimientoStock: 'MovimientoStock',
-  AsignacionHerramienta: 'AsignacionHerramienta'
+  AsignacionHerramienta: 'AsignacionHerramienta',
+  Olt: 'Olt',
+  Onu: 'Onu',
+  ContratoWispro: 'ContratoWispro',
+  RegistroConfiguracion: 'RegistroConfiguracion'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -349,6 +353,73 @@ export const AsignacionHerramientaScalarFieldEnum = {
 } as const
 
 export type AsignacionHerramientaScalarFieldEnum = (typeof AsignacionHerramientaScalarFieldEnum)[keyof typeof AsignacionHerramientaScalarFieldEnum]
+
+
+export const OltScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  sucursal: 'sucursal',
+  ipGestion: 'ipGestion',
+  vendor: 'vendor',
+  tipoFuente: 'tipoFuente',
+  activa: 'activa',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OltScalarFieldEnum = (typeof OltScalarFieldEnum)[keyof typeof OltScalarFieldEnum]
+
+
+export const OnuScalarFieldEnum = {
+  id: 'id',
+  oltId: 'oltId',
+  pon: 'pon',
+  idOnu: 'idOnu',
+  serial: 'serial',
+  ip: 'ip',
+  potenciaDbm: 'potenciaDbm',
+  estado: 'estado',
+  vlan: 'vlan',
+  pppoeUser: 'pppoeUser',
+  publicIdWispro: 'publicIdWispro',
+  leidoEn: 'leidoEn',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OnuScalarFieldEnum = (typeof OnuScalarFieldEnum)[keyof typeof OnuScalarFieldEnum]
+
+
+export const ContratoWisproScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  nombreCliente: 'nombreCliente',
+  direccion: 'direccion',
+  plan: 'plan',
+  estado: 'estado',
+  ip: 'ip',
+  pppoeUsername: 'pppoeUsername',
+  sincronizadoEn: 'sincronizadoEn'
+} as const
+
+export type ContratoWisproScalarFieldEnum = (typeof ContratoWisproScalarFieldEnum)[keyof typeof ContratoWisproScalarFieldEnum]
+
+
+export const RegistroConfiguracionScalarFieldEnum = {
+  id: 'id',
+  empleadoId: 'empleadoId',
+  tecnicoNombre: 'tecnicoNombre',
+  publicIdWispro: 'publicIdWispro',
+  serialOnu: 'serialOnu',
+  marca: 'marca',
+  accion: 'accion',
+  parametros: 'parametros',
+  resultado: 'resultado',
+  origen: 'origen',
+  createdAt: 'createdAt'
+} as const
+
+export type RegistroConfiguracionScalarFieldEnum = (typeof RegistroConfiguracionScalarFieldEnum)[keyof typeof RegistroConfiguracionScalarFieldEnum]
 
 
 export const SortOrder = {

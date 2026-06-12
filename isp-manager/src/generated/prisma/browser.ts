@@ -107,3 +107,23 @@ export type MovimientoStock = Prisma.MovimientoStockModel
  * 
  */
 export type AsignacionHerramienta = Prisma.AsignacionHerramientaModel
+/**
+ * Model Olt
+ * 
+ */
+export type Olt = Prisma.OltModel
+/**
+ * Model Onu
+ * 
+ */
+export type Onu = Prisma.OnuModel
+/**
+ * Model ContratoWispro
+ * 
+ */
+export type ContratoWispro = Prisma.ContratoWisproModel
+/**
+ * Model RegistroConfiguracion
+ * 
+ */
+export type RegistroConfiguracion = Prisma.RegistroConfiguracionModel
