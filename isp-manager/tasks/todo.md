@@ -132,3 +132,45 @@ de qué días hubo cargas.
 primera mejora de la Fase de pulido.
 
 ---
+
+## Fase RED — Módulo FTTH / ONUs (rama `feat/modulo-red`)
+
+### Fase 0 — Setup
+- [x] T0 — rama `feat/modulo-red` + `.env` (secretos reales) + `.env.example` (placeholders)
+
+### Fase 1 — Datos base  ✅ (migración aplicada en dev; typecheck 0 errores)
+- [x] T1a — schema: `Modulo.RED`, `FuenteOlt`, modelos `Olt/Onu/ContratoWispro/RegistroConfiguracion`
+- [x] T1b — migración `20260609105106_modulo_red` (generada + aplicada en dev) + client regenerado
+- [x] T1c — seed: `RED` en `PERMISOS_DEFAULT` (55 permisos sembrados)
+- [x] T1d — audit.ts: módulo `RED` + acciones `SYNC_ONUS`, `CONFIGURAR_ONU`
+
+### Fase 2 — Lógica pura + tests  ✅ (11 tests verde)
+- [x] T2a — `potencia.ts` (clasificarSenal) + test
+- [x] T2b — `fuentes/parse-arrays.ts` (parseArrays) + test
+
+### Fase 3 — Ingesta
+- [x] T3 — WisPro: `wispro/cliente.ts` + `wispro/sync-contratos.ts`
+- [x] T4 — fuente PANEL: `fuentes/tipos.ts` + `fuentes/panel.ts`
+
+### Fase 4 — Server actions
+- [x] T5 — `modules/red/actions.ts` (getOnus / getOnuById / sincronizarOnus / getResumenRed)
+
+### Fase 5 — UI  ✅ (estilo MEJORAS_VISUALES, ui-ux-pro-max)
+- [x] T6 — `/red/page.tsx` + `_components/sync-bar.tsx` (KPIs, tabla+cards, semáforo, ?q=, filtros OLT/nivel, sync)
+- [x] T7 — `/red/[id]/page.tsx` (detalle + potencia destacada + historial config)
+- [x] T8 — sidebar: ítem `RED` en grupo Operaciones
+
+### Fase 6 — Reporte vsol-config
+- [x] T9 — `/api/red/configuracion/route.ts` (bearer token, Zod, RegistroConfiguracion + audit)
+
+### Fase 7 — Verificación  ✅
+- [x] T10 — typecheck 0 · eslint 0 · 130/130 tests · `npm run build` OK
+
+### Pendientes (siguientes tareas)
+- [ ] Ingesters SNMP/TELNET para las otras ~5 OLTs (hoy solo PANEL/El Mollar)
+- [ ] Wiring del cliente `vsol-config` (escritorio) para que haga POST a `/api/red/configuracion`
+- [ ] Resolver nombre de plan (plan_id → /plans) en la cache WisPro
+- [ ] Optimizar sync de contratos WisPro (hoy upsert secuencial de ~3134)
+- [ ] Smoke test en vivo: `npm run dev` → /red → «Sincronizar» (requiere VPN)
+
+---
