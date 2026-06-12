@@ -24,11 +24,13 @@ export type AuditAccion =
   | "REGISTRAR_MOVIMIENTO_STOCK"
   | "ASIGNAR_HERRAMIENTA" | "DEVOLVER_HERRAMIENTA"
   // Admin
-  | "CAMBIAR_PERMISO" | "ACTUALIZAR_EMPRESA";
+  | "CAMBIAR_PERMISO" | "ACTUALIZAR_EMPRESA"
+  // Red
+  | "SYNC_ONUS" | "CONFIGURAR_ONU";
 
 export type AuditModulo =
   | "AUTH" | "EMPLEADOS" | "FLOTA" | "COMBUSTIBLE" | "CUADRILLAS"
-  | "PRESUPUESTOS" | "CLIENTES" | "ITEMS" | "STOCK" | "ADMIN";
+  | "PRESUPUESTOS" | "CLIENTES" | "ITEMS" | "STOCK" | "RED" | "ADMIN";
 
 interface LogParams {
   empleadoId?: string;
@@ -94,6 +96,8 @@ export const ACCION_LABEL: Record<AuditAccion, string> = {
   DEVOLVER_HERRAMIENTA:       "Devolver herramienta",
   CAMBIAR_PERMISO:            "Cambiar permiso de módulo",
   ACTUALIZAR_EMPRESA:         "Actualizar datos de empresa",
+  SYNC_ONUS:                  "Sincronizar ONUs",
+  CONFIGURAR_ONU:             "Configurar equipo (ONU)",
 };
 
 export const MODULO_AUDIT_COLOR: Record<AuditModulo, string> = {
@@ -106,5 +110,6 @@ export const MODULO_AUDIT_COLOR: Record<AuditModulo, string> = {
   CLIENTES:     "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300",
   ITEMS:        "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300",
   STOCK:        "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300",
+  RED:          "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
   ADMIN:        "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
 };
